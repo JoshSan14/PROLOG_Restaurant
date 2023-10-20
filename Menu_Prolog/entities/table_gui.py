@@ -1,7 +1,7 @@
 import sys
 import PyQt5.QtWidgets as Qtw
 from PyQt5.QtCore import Qt
-from Menu_Prolog.entities import table as tbl
+import table as tbl
 import client_gui as cgui
 
 

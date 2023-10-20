@@ -1,7 +1,7 @@
 import sys
 import PyQt5.QtWidgets as Qtw
 from PyQt5.QtCore import Qt as Qt
-from Menu_Prolog.entities import client as clnt
+import client as clnt
 
 class OrderWindow(Qtw.QDialog):
     def __init__(self, client):

@@ -1,8 +1,8 @@
 import sys
 import PyQt5.QtWidgets as Qtw
 from PyQt5.QtCore import Qt
-from Menu_Prolog.entities import table as tbl
-from Menu_Prolog.entities import client as clnt
+import table as tbl
+import client as clnt
 
 
 class ClientWindow(Qtw.QDialog):

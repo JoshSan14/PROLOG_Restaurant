@@ -3,13 +3,17 @@ import PyQt5.QtWidgets as Qtw
 import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt
 import healthy_menu as hm
+import client as clnt
 
 class HealthyMenuWindow(Qtw.QWidget):
-    def __init__(self):
+    def __init__(self, healthy_menu, client):
         super().__init__()
 
         # plMenu instance
         self.pl_menu = hm.HealthyMenu()
+
+        #Client
+        self.client = clnt.Client()
 
         # Add a title
         self.setWindowTitle("Restaurante")
@@ -446,18 +450,15 @@ class HealthyMenuWindow(Qtw.QWidget):
             print(f"Error: {e}")
 
 #############################################
-    # def get_table(self):
-    #     try:
-    #         selected_row = self.get_selected_row()
-    #         order =
-    #
-    #             self.table.item(selected_row, 0))
-    #         id_table = item.text()
-    #         for table in self.table_list:
-    #             if int(table.id_table) == int(id_table):
-    #                 return table
-    #     except Exception as e:
-    #         print(f"Error: {e} 1")
+    def get_table(self):
+        try:
+            order = []
+            selected_row = self.get_selected_row()
+            for i in range(len(self.col_hdr)):
+                order.append(self.table.item(selected_row, i).text())
+            #Crear instancia combo
+        except Exception as e:
+            print(f"Error: {e} 1")
 #################################################
 
 
@@ -468,7 +469,8 @@ class HealthyMenuWindow(Qtw.QWidget):
 
 if __name__ == "__main__":
     app = Qtw.QApplication(sys.argv)
-    mw = HealthyMenuWindow()
+    healthy = hm.HealthyMenu()
+    mw = HealthyMenuWindow(healthy)
 
     data = [
         ("Refresco de limón", "Pollo a la parrilla", "Ensalada mixta", "Arroz blanco", "Papas fritas",
