@@ -4,19 +4,21 @@ import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt
 import healthy_menu as hm
 import client as clnt
+import order as ordr
+
 
 class HealthyMenuWindow(Qtw.QWidget):
     def __init__(self, healthy_menu, client):
         super().__init__()
 
         # plMenu instance
-        self.pl_menu = hm.HealthyMenu()
+        self.pl_menu = healthy_menu
 
-        #Client
-        self.client = clnt.Client()
+        # Client
+        self.client = client
 
         # Add a title
-        self.setWindowTitle("Restaurante")
+        self.setWindowTitle(f"Menú saludable de {self.client.name}")
         # Set layout
         self.main_lyt = Qtw.QVBoxLayout()
 
@@ -346,7 +348,7 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         self.select_opt_btn = Qtw.QPushButton("Seleccionar Opción")
-        #self.get_opt_btn.clicked.connect()
+        self.select_opt_btn.clicked.connect(self.select_option)
 
         self.main_lyt.addLayout(self.gen_lyt)
         self.main_lyt.addLayout(self.dri_lyt)
@@ -449,71 +451,40 @@ class HealthyMenuWindow(Qtw.QWidget):
         except Exception as e:
             print(f"Error: {e}")
 
-#############################################
-    def get_table(self):
+    def select_option(self):
         try:
-            order = []
+            combo = []
             selected_row = self.get_selected_row()
             for i in range(len(self.col_hdr)):
-                order.append(self.table.item(selected_row, i).text())
-            #Crear instancia combo
+                combo.append(self.table.item(selected_row, i).text())
+            order = ordr.Order(
+                id_order=self.get_last_id() + 1,
+                description=f"{combo[0]} + {combo[1]} + {combo[2]} + {combo[3]} + {combo[4]} + {combo[5]}",
+                price=combo[6],
+                cals=combo[7]
+            )
+            self.client.order.append(order)
+            print("\n")
+            for ord in self.client.order:
+                print(ord.description)
         except Exception as e:
             print(f"Error: {e} 1")
-#################################################
 
-
-    def select_option(self):
-        pass
-
+    def get_last_id(self):
+        try:
+            if len(self.client.order) > 0:
+                return self.client.order[-1].id_order
+            else:
+                return 0
+        except Exception as e:
+            print(f"Error: {e} 5")
 
 
 if __name__ == "__main__":
     app = Qtw.QApplication(sys.argv)
     healthy = hm.HealthyMenu()
-    mw = HealthyMenuWindow(healthy)
-
-    data = [
-        ("Refresco de limón", "Pollo a la parrilla", "Ensalada mixta", "Arroz blanco", "Papas fritas",
-         "Helado de vainilla", 10.99, 500),
-        ("Té helado", "Bistec a la parrilla", "Puré de papas", "Brócoli al vapor", "Ensalada César", "Tarta de manzana",
-         12.50, 600),
-        ("Agua mineral", "Salmón a la plancha", "Arroz integral", "Zanahorias glaseadas", "Ensalada de aguacate",
-         "Yogur con frutas", 11.25, 450),
-        ("Limonada", "Chuletas de cerdo", "Puré de coliflor", "Judías verdes al vapor", "Ensalada de tomate",
-         "Pastel de chocolate", 9.75, 550),
-        ("Coca-Cola", "Pavo asado", "Batata al horno", "Espinacas salteadas", "Ensalada griega", "Gelatina de fresa",
-         10.00, 480),
-        ("Té verde", "Tofu a la parrilla", "Quinua con vegetales", "Berenjenas al horno", "Ensalada de remolacha",
-         "Sorbete de limón", 9.99, 400),
-        ("Jugo de naranja", "Pechuga de pollo a la plancha", "Couscous", "Brócoli al vapor", "Ensalada de espinacas",
-         "Flan de caramelo", 11.75, 520),
-        ("Limonada", "Salmón a la parrilla", "Puré de papas", "Zanahorias glaseadas", "Ensalada de aguacate",
-         "Tarta de manzana", 12.50, 600),
-        ("Coca-Cola", "Bistec a la parrilla", "Arroz integral", "Judías verdes al vapor", "Ensalada César",
-         "Yogur con frutas", 11.25, 450),
-        ("Agua mineral", "Pollo a la parrilla", "Batata al horno", "Espinacas salteadas", "Ensalada de tomate",
-         "Pastel de chocolate", 9.75, 550),
-        ("Refresco de limón", "Pavo asado", "Quinua con vegetales", "Berenjenas al horno", "Ensalada griega",
-         "Gelatina de fresa", 10.00, 480),
-        ("Té helado", "Tofu a la parrilla", "Couscous", "Brócoli al vapor", "Ensalada de remolacha", "Sorbete de limón",
-         9.99, 400),
-        ("Jugo de naranja", "Pechuga de pollo a la plancha", "Puré de coliflor", "Zanahorias glaseadas",
-         "Ensalada de aguacate", "Tarta de manzana", 12.50, 600),
-        ("Limonada", "Salmón a la parrilla", "Arroz integral", "Judías verdes al vapor", "Ensalada César",
-         "Yogur con frutas", 11.25, 450),
-        ("Té verde", "Bistec a la parrilla", "Batata al horno", "Espinacas salteadas", "Ensalada de tomate",
-         "Pastel de chocolate", 9.75, 550),
-        ("Coca-Cola", "Pollo a la parrilla", "Quinua con vegetales", "Berenjenas al horno", "Ensalada griega",
-         "Gelatina de fresa", 10.00, 480),
-        (
-            "Agua mineral", "Pavo asado", "Couscous", "Brócoli al vapor", "Ensalada de remolacha", "Sorbete de limón",
-            9.99,
-            400),
-        ("Refresco de limón", "Tofu a la parrilla", "Puré de coliflor", "Zanahorias glaseadas", "Ensalada de aguacate",
-         "Tarta de manzana", 12.50, 600),
-        ("Té helado", "Pechuga de pollo a la plancha", "Arroz integral", "Judías verdes al vapor", "Ensalada César",
-         "Yogur con frutas", 11.25, 450)
-    ]
+    client = clnt.Client(5, "Joshua")
+    mw = HealthyMenuWindow(healthy, client)
 
     # Run the application
     sys.exit(app.exec_())
