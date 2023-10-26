@@ -1,113 +1,103 @@
-from db_conn import DBConn
 from abc import ABC, abstractmethod
 
 
-# @abstractmethod
-# def get_ingredient__db(self):
-#     return self.db_conn.load_table(self.table_name)
-#
-#
-# @abstractmethod
-# def add_ingredient_db(self, new_record):
-#     self.db_conn.add_record(self.table_name, new_record)
-#     print("Added")
-#
-#
-# @abstractmethod
-# def edit_ingredient_db(self, id_column, record_id, new_values):
-#     self.db_conn.update_record(self.table_name, id_column, record_id, new_values)
-#     print("Updated")
-#
-#
-# @abstractmethod
-# def delete_ingredient_db(self, record_id):
-#     self.db_conn.delete_record(self.table_name, record_id)
-#     print("Deleted")
+# Definimos una clase abstracta llamada 'Ingredient' que servirá como base para otros ingredientes.
+class Ingredient(ABC):
+    def __init__(self, id_object, name, cals, diet_nat, flavor, price, breakfast, lunch,
+                 dinner):
+        self.id_object = id_object  # Identificador único del ingrediente
+        self.name = name  # Nombre del ingrediente
+        self.cals = cals  # Cantidad de calorías
+        self.diet_nat = diet_nat  # Naturaleza dietética
+        self.flavor = flavor  # Sabor
+        self.price = price  # Precio
+        self.breakfast = breakfast  # Disponibilidad en el desayuno
+        self.lunch = lunch  # Disponibilidad en el almuerzo
+        self.dinner = dinner  # Disponibilidad en la cena
+        self.id_column = "id"
+        self.nat_opts = ["Vegana", "Carnica"]
+        self.flav_opts = ["Dulce", "Salado", "Amargo", "Acido", "Umami"]
 
-class Ingredient:
-    def __init__(self, id_ingredient, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner):
-        self.id_ingredient = id_ingredient
-        self.name = name
-        self.cals = cals
-        self.diet_nat = diet_nat
-        self.flavor = flavor
-        self.price = price
-        self.breakfast = breakfast
-        self.lunch = lunch
-        self.dinner = dinner
-        self.db_conn = DBConn("restaurante", "postgres", "1234", "localhost", "5432")
-        self.table_name = "ingrediente.ingrediente"
-
-    def create(self):
-        new_record = {"nombre": self.name, "calorias": self.cals, "naturaleza_dietetica": self.diet_nat, "sabor": sabor,
-                      "precio": self.price, "desayuno": self.desayuno, "almuerzo": self.almuerzo, "cena": self.cena}
-        self.db_conn.create_record(self.table_name, new_record)
-
-    @classmethod
-    def read(cls, id_ingredient):
+    @abstractmethod
+    def to_dict(self):
         pass
 
-    def update(self, table, id_column, record_id, new_values):
-        updated_record = {"nombre": self.name, "calorias": self.cals, "naturaleza_dietetica": self.diet_nat, "sabor": sabor,
-                        "precio": self.price, "desayuno": self.desayuno, "almuerzo": self.almuerzo, "cena": self.cena}
 
-    def delete(self):
-        pass
+# Creamos una subclase 'Drink' que hereda de 'Ingredient'.
+class Drink(Ingredient):
 
-class Drink(Ingredient, ABC):
-    def __init__(self, id_ingredient, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner, category,
-                 temperature, base):
-        super().__init__(id_ingredient, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner)
-        self.category = category
-        self.temperature = temperature
-        self.base = base
-        self.table_name = "ingrediente.bebida"
+    def __init__(self, id_object=0, name="", cals=0, diet_nat="", flavor="", price=0, breakfast=True, lunch=True,
+                 dinner=True, category="", temperature="", base=""):
+        super().__init__(id_object, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner)
+        self.category = category  # Categoría de la bebida
+        self.temperature = temperature  # Temperatura ideal
+        self.base = base  # Base de la bebida
+        self.table_name = "ingrediente.bebida"  # Nombre de la tabla en la base de datos
+        self.cat_opts = ["Soda", "Natural", "Batido"]
+        self.temp_opts = ["Caliente", "Frio", "Tibio"]
+        self.base_opts = ["Agua", "Leche", "Gas"]
 
-
-class Protein(Ingredient, ABC):
-    def __init__(self, id_ingredient, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner, origin,
-                 texture, cook_met):
-        super().__init__(id_ingredient, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner)
-        self.origin = origin
-        self.texture = texture
-        self.cook_met = cook_met
-        self.table_name = "ingrediente.proteina"
+    def to_dict(self):
+        return {"nombre": self.name, "calorias": self.cals,
+                "naturaleza_dietetica": self.diet_nat, "sabor": self.flavor, "precio": self.price,
+                "desayuno": self.breakfast, "almuerzo": self.lunch, "cena": self.dinner, "categoria": self.category,
+                "temperatura": self.temperature, "base": self.base}
 
 
-class Garrison(Ingredient, ABC):
-    def __init__(self, id_ingredient, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner, category,
-                 size, cook_met):
-        super().__init__(id_ingredient, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner)
-        self.category = category
-        self.size = size
-        self.cook_met = cook_met
-        self.table_name = "ingrediente.guarnicion"
+# Creamos una subclase 'Protein' que hereda de 'Ingredient'.
+class Protein(Ingredient):
+
+    def __init__(self, id_object=0, name="", cals=0, diet_nat="", flavor="", price=0, breakfast=True, lunch=True,
+                 dinner=True, origin="", texture="", cook_met=""):
+        super().__init__(id_object, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner)
+        self.origin = origin  # Origen de la proteína
+        self.texture = texture  # Textura
+        self.cook_met = cook_met  # Método de cocción
+        self.table_name = "ingrediente.proteina"  # Nombre de la tabla en la base de datos
+        self.ori_opts = ["Pollo", "Pescado", "Cerdo", "Res", "Marisco"]
+        self.tex_opts = ["Suave", "Dura"]
+        self.cook_met_opts = ["Asado", "Al vapor", "Fritura", "Horneado", "Asado", "Sofrito"]
+
+    def to_dict(self):
+        return {"nombre": self.name, "calorias": self.cals,
+                "naturaleza_dietetica": self.diet_nat, "sabor": self.flavor, "precio": self.price,
+                "desayuno": self.breakfast, "almuerzo": self.lunch, "cena": self.dinner, "origen": self.origin,
+                "textura": self.texture, "metodo_coccion": self.cook_met}
 
 
-class Dessert(Ingredient, ABC):
-    def __init__(self, id_ingredient, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner, texture,
-                 temperature):
-        super().__init__(id_ingredient, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner)
-        self.texture = texture
-        self.temperature = temperature
-        self.table_name = "ingrediente.postre"
+# Creamos una subclase 'Garrison' que hereda de 'Ingredient'.
+class Garrison(Ingredient):
+    def __init__(self, id_object=0, name="", cals=0, diet_nat="", flavor="", price=0, breakfast=True, lunch=True,
+                 dinner=True, category="", size="", cook_met=""):
+        super().__init__(id_object, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner)
+        self.category = category  # Categoría de la guarnición
+        self.size = size  # Tamaño
+        self.cook_met = cook_met  # Método de cocción
+        self.table_name = "ingrediente.guarnicion"  # Nombre de la tabla en la base de datos
+        self.cat_opts = ["Grano", "Tuberculo", "Verdura", "Pan"]
+        self.size_opts = ["Pequeño", "Mediano", "Grande"]
+        self.cook_met_opts = ["Cocido", "Fritura", "Fresco", "Al vapor", "Asado", "Tostado", "Horneado", "Salteado", "Puré"]
+
+    def to_dict(self):
+        return {"nombre": self.name, "calorias": self.cals,
+                "naturaleza_dietetica": self.diet_nat, "sabor": self.flavor, "precio": self.price,
+                "desayuno": self.breakfast, "almuerzo": self.lunch, "cena": self.dinner, "categoria": self.category,
+                "tamano": self.size, "metodo_coccion": self.cook_met}
 
 
-if __name__ == "__main__":
-    drink = Drink(id_ingredient=1, name="Soda", cals=100, diet_nat=False, flavor="Cola", price=2.50,
-                  breakfast=True, lunch=True, dinner=True, category="Soft Drink", temperature="Cold", base="Carbonated")
+# Creamos una subclase 'Dessert' que hereda de 'Ingredient'.
+class Dessert(Ingredient):
+    def __init__(self, id_object=0, name="", cals=0, diet_nat="", flavor="", price=0, breakfast=True, lunch=True,
+                 dinner=True, texture="", temperature=""):
+        super().__init__(id_object, name, cals, diet_nat, flavor, price, breakfast, lunch, dinner)
+        self.texture = texture  # Textura del postre
+        self.temperature = temperature  # Temperatura ideal
+        self.table_name = "ingrediente.postre"  # Nombre de la tabla en la base de datos
+        self.tex_opts = ["Suave", "Dura"]
+        self.temp_opts = ["Caliente", "Frio", "Tibio"]
 
-    protein = Protein(id_ingredient=2, name="Chicken Breast", cals=150, diet_nat=True, flavor="Neutral", price=5.99,
-                      breakfast=False, lunch=True, dinner=True, origin="Poultry", texture="Lean", cook_met="Grilled")
-
-    garrison = Garrison(id_ingredient=3, name="French Fries", cals=300, diet_nat=False, flavor="Salty", price=3.00,
-                        breakfast=False, lunch=True, dinner=True, category="Side Dish", size="Large",
-                        cook_met="Deep Fried")
-
-    dessert = Dessert(id_ingredient=4, name="Chocolate Cake", cals=400, diet_nat=False, flavor="Chocolate", price=4.50,
-                      breakfast=False, lunch=False, dinner=True, texture="Moist", temperature="Room Temperature")
-
-    print(drink.get_ingredient_table_name())
-    print(drink.get_ingredient_table_name())
-    print(garrison.get_ingredient_table_name())
-    print(dessert.get_ingredient_table_name())
+    def to_dict(self):
+        return {"nombre": self.name, "calorias": self.cals,
+                "naturaleza_dietetica": self.diet_nat, "sabor": self.flavor, "precio": self.price,
+                "desayuno": self.breakfast, "almuerzo": self.lunch, "cena": self.dinner, "textura": self.texture,
+                "temperatura": self.temperature}

@@ -20,12 +20,12 @@ class TableWindow(Qtw.QWidget):
 
         # Set table
         self.col_hdr = ["ID Mesa", "Nº Clientes", "Total"]
-        self.table = Qtw.QTableWidget(0, len(self.col_hdr))
-        self.table.verticalHeader().setVisible(False)
-        self.table.setHorizontalHeaderLabels(self.col_hdr)
-        self.table.setEditTriggers(Qtw.QAbstractItemView.NoEditTriggers)
-        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.data_tbl = Qtw.QTableWidget(0, len(self.col_hdr))
+        self.data_tbl.verticalHeader().setVisible(False)
+        self.data_tbl.setHorizontalHeaderLabels(self.col_hdr)
+        self.data_tbl.setEditTriggers(Qtw.QAbstractItemView.NoEditTriggers)
+        self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         # Set btns
         self.btn_lyt = Qtw.QHBoxLayout()
@@ -39,22 +39,15 @@ class TableWindow(Qtw.QWidget):
         self.btn_lyt.addWidget(self.edit_table_btn)
         self.btn_lyt.addWidget(self.delete_table_btn)
 
-        self.main_lyt.addWidget(self.table)
+        self.main_lyt.addWidget(self.data_tbl)
         self.main_lyt.addLayout(self.btn_lyt)
         self.setLayout(self.main_lyt)
         self.show()
 
-    def get_selected_row(self):
-        try:
-            selected_row = self.table.currentRow()
-            return selected_row
-        except Exception as e:
-            print(f"Error: {e}")
-
     def get_table(self):
         try:
-            selected_row = self.get_selected_row()
-            item = self.table.item(selected_row, 0)
+            selected_row = self.data_tbl.currentRow()
+            item = self.data_tbl.item(selected_row, 0)
             id_table = item.text()
             for table in self.table_list:
                 if int(table.id_table) == int(id_table):
@@ -74,7 +67,7 @@ class TableWindow(Qtw.QWidget):
 
     def delete_row(self, selected_row):
         try:
-            self.table.removeRow(selected_row)
+            self.data_tbl.removeRow(selected_row)
             print(f"Row {selected_row} deleted.")
         except Exception as e:
             print(f"Error: {e} 3")
@@ -90,24 +83,28 @@ class TableWindow(Qtw.QWidget):
 
     def add_row(self):
         # Abrir espacio en la tabla
-        rows = self.table.rowCount()
-        self.table.setRowCount(rows + 1)
+        rows = self.data_tbl.rowCount()
+        self.data_tbl.setRowCount(rows + 1)
 
         # Crear instancia
-        new_table = tbl.Table(self.table_count + 1)
-        self.table_list.append(new_table)
-        self.table_count += 1
+        new_table = self.create_table()
 
         for col, value in enumerate([new_table.id_table, len(new_table.clients), new_table.total_bill]):
             item = Qtw.QTableWidgetItem(str(value))
-            self.table.setItem(self.table.rowCount() - 1, col, item)
+            self.data_tbl.setItem(self.data_tbl.rowCount() - 1, col, item)
 
-    def update_table(self):
+    def create_table(self):
+        table = tbl.Table(self.table_count + 1)
+        self.table_list.append(table)
+        self.table_count += 1
+        return table
+
+    def update_data_table(self):
         try:
             for row, table in enumerate(self.table_list):
                 for col, value in enumerate([table.id_table, len(table.clients), table.total_bill]):
                     item = Qtw.QTableWidgetItem(str(value))
-                    self.table.setItem(row, col, item)
+                    self.data_tbl.setItem(row, col, item)
         except Exception as e:
             print(f"Error: {e} 5")
 
@@ -117,7 +114,7 @@ class TableWindow(Qtw.QWidget):
             client_window = cgui.ClientWindow(table)
             client_window.setModal(True)
             client_window.exec_()
-            self.update_table()
+            self.update_data_table()
         except Exception as e:
             print(f"Error: {e} 6")
 

@@ -3,6 +3,7 @@ import PyQt5.QtWidgets as Qtw
 from PyQt5.QtCore import Qt
 import table as tbl
 import client as clnt
+import order_gui as ogui
 
 
 class ClientWindow(Qtw.QDialog):
@@ -28,41 +29,34 @@ class ClientWindow(Qtw.QDialog):
 
         # Set table
         self.col_hdr = ["ID", "Nombre", "Total ($)"]
-        self.data_table = Qtw.QTableWidget(0, len(self.col_hdr))
-        self.data_table.verticalHeader().setVisible(False)
-        self.data_table.setHorizontalHeaderLabels(self.col_hdr)
-        self.data_table.setEditTriggers(Qtw.QAbstractItemView.NoEditTriggers)
-        self.data_table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.data_table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.data_tbl = Qtw.QTableWidget(0, len(self.col_hdr))
+        self.data_tbl.verticalHeader().setVisible(False)
+        self.data_tbl.setHorizontalHeaderLabels(self.col_hdr)
+        self.data_tbl.setEditTriggers(Qtw.QAbstractItemView.NoEditTriggers)
+        self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         if self.client_count > 0:
-            self.update_data_table()
+            self.load_data_table()
 
         # Set btn
         self.btn_lyt = Qtw.QHBoxLayout()
         self.update_client_btn = Qtw.QPushButton("Editar Orden")
-        # self.update_table_btn.clicked.connect()
+        self.update_client_btn.clicked.connect(self.edit_order)
         self.delete_client_btn = Qtw.QPushButton("Eliminar")
         self.delete_client_btn.clicked.connect(self.full_delete)
         self.btn_lyt.addWidget(self.update_client_btn)
         self.btn_lyt.addWidget(self.delete_client_btn)
 
         self.main_lyt.addLayout(self.client_lyt)
-        self.main_lyt.addWidget(self.data_table)
+        self.main_lyt.addWidget(self.data_tbl)
         self.main_lyt.addLayout(self.btn_lyt)
         self.setLayout(self.main_lyt)
 
-    def get_selected_row(self):
-        try:
-            selected_row = self.data_table.currentRow()
-            return selected_row
-        except Exception as e:
-            print(f"Error: {e}")
-
     def get_client(self):
         try:
-            selected_row = self.get_selected_row()
-            item = self.data_table.item(selected_row, 0)
+            selected_row = self.data_tbl.currentRow()
+            item = self.data_tbl.item(selected_row, 0)
             id_client = item.text()
             for client in self.rest_table.clients:
                 if int(client.id_client) == int(id_client):
@@ -82,7 +76,7 @@ class ClientWindow(Qtw.QDialog):
 
     def delete_row(self, selected_row):
         try:
-            self.data_table.removeRow(selected_row)
+            self.data_tbl.removeRow(selected_row)
             print(f"Row {selected_row} deleted.")
         except Exception as e:
             print(f"Error: {e}")
@@ -100,31 +94,35 @@ class ClientWindow(Qtw.QDialog):
         name = self.client_tbox.text()
         if name:
             # Abrir espacio en la tabla
-            rows = self.data_table.rowCount()
-            self.data_table.setRowCount(rows + 1)
+            rows = self.data_tbl.rowCount()
+            self.data_tbl.setRowCount(rows + 1)
 
             # Crear instancia
-            client = clnt.Client(self.client_count + 1, name)
-            self.rest_table.clients.append(client)
-            self.client_count += 1
+            client = self.create_client(name)
 
             for col, value in enumerate([client.id_client, client.name, client.bill]):
                 item = Qtw.QTableWidgetItem(str(value))
-                self.data_table.setItem(self.data_table.rowCount() - 1, col, item)
+                self.data_tbl.setItem(self.data_tbl.rowCount() - 1, col, item)
 
-    def update_data_table(self):
+    def create_client(self, name):
+        client = clnt.Client(self.client_count + 1, name)
+        self.rest_table.clients.append(client)
+        self.client_count += 1
+        return client
+
+    def load_data_table(self):
         # Clear the existing data in the table
-        self.data_table.setRowCount(0)
+        self.data_tbl.setRowCount(0)
 
         # Populate the table with client data using list comprehensions
         data = [[str(client.id_client), client.name, str(client.bill)] for client in self.rest_table.clients]
 
         # Update the table with data
         for row_index, row_data in enumerate(data):
-            self.data_table.insertRow(row_index)
+            self.data_tbl.insertRow(row_index)
             for col_index, col_data in enumerate(row_data):
                 item = Qtw.QTableWidgetItem(col_data)
-                self.data_table.setItem(row_index, col_index, item)
+                self.data_tbl.setItem(row_index, col_index, item)
 
     def get_last_id(self):
         try:
@@ -136,6 +134,27 @@ class ClientWindow(Qtw.QDialog):
         except Exception as e:
             print(f"Error: {e} 5")
 
+    def get_total_bill(self):
+        try:
+            total_bill = sum(client.bill for client in self.rest_table.clients)
+            self.rest_table.total_bill = total_bill
+        except Exception as e:
+            print(f"Error: {e} alfa")
+            return 0  # Return 0 in case of an error
+
+    def update_data_table(self):
+        pass
+
+    def edit_order(self):
+        try:
+            client = self.get_client()
+            order_window = ogui.OrderWindow(client)
+            order_window.setModal(True)
+            order_window.exec_()
+            self.get_total_bill()
+            #Actualizar valores
+        except Exception as e:
+            print(f"Error: {e} 6")
 
 if __name__ == "__main__":
     # Este código se ejecutará solo cuando table_gui.py se ejecute como script

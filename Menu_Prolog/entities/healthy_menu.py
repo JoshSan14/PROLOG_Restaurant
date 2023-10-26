@@ -4,13 +4,13 @@ from pyswip import Prolog as Pl
 
 
 class HealthyMenu:
-    def __init__(self):
+    def __init__(self, database):
         self.query_ingredients = Pl()
-        self.database = dbc.DBConn("restaurante", "postgres", "1234", "localhost", "5432")
-        self.drink_db = self.database.read_record("ingrediente.bebida")
-        self.protein_db = self.database.read_record("ingrediente.proteina")
-        self.garrison_db = self.database.read_record("ingrediente.guarnicion")
-        self.dessert_db = self.database.read_record("ingrediente.postre")
+        self.database = database
+        self.drink_db = self.database.retrieve_all_records("ingrediente.bebida")
+        self.protein_db = self.database.retrieve_all_records("ingrediente.proteina")
+        self.garrison_db = self.database.retrieve_all_records("ingrediente.guarnicion")
+        self.dessert_db = self.database.retrieve_all_records("ingrediente.postre")
         self.load_menu_data(self.drink_db, self.protein_db, self.garrison_db, self.dessert_db)
         self.query_ingredients.consult("query.pl")
 
@@ -24,9 +24,9 @@ class HealthyMenu:
         for dato in data:
             formatted_data = []
             for item in dato:
-                if isinstance(item, (int, bool)):
-                    formatted_data.append(str(int(item) if isinstance(item, bool) else item))
-                elif isinstance(item, float):
+                #if isinstance(item, (int, bool)):
+                #    formatted_data.append(str(int(item) if isinstance(item, bool) else item))
+                if isinstance(item, float):
                     formatted_data.append(f'{round(item, 1)}')
                 else:
                     formatted_data.append(f"'{str(item).lower()}'")
@@ -86,5 +86,5 @@ class HealthyMenu:
 
 
 if __name__ == "__main__":
-    menu = HealthyMenu()
+    menu = HealthyMenu(dbc.DBConn("restaurante", "postgres", "1234", "localhost", "5432"))
     menu.main()

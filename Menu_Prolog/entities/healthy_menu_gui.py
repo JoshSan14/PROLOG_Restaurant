@@ -5,8 +5,8 @@ from PyQt5.QtCore import Qt
 import healthy_menu as hm
 import client as clnt
 import order as ordr
-
-
+import db_conn as dbc
+from crud_utils import Utils as crud
 class HealthyMenuWindow(Qtw.QWidget):
     def __init__(self, healthy_menu, client):
         super().__init__()
@@ -23,29 +23,29 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.main_lyt = Qtw.QVBoxLayout()
 
         # Options
-        self.nat_opts = ["cualquiera", "vegana", "carnica"]
-        self.des_opts = ["cualquiera", "dulce", "salado", "amargo", "acido", "umami"]
-        self.pro_ori_opts = ["cualquiera", "pollo", "pescado", "cerdo", "res", "marisco"]
-        self.tex_opts = ["cualquiera", "suave", "dura"]
-        self.dri_cat_opts = ["cualquiera", "soda", "natural", "batido"]
-        self.temp_opts = ["cualquiera", "caliente", "frio", "tibio"]
-        self.dri_base_opts = ["cualquiera", "agua", "leche", "gas"]
-        self.gar_cat_opts = ["cualquiera", "grano", "tuberculo", "verdura", "pan"]
-        self.size_opts = ["cualquiera", "pequeño", "mediano", "grande"]
-        self.g_coc_opts = ["cualquiera", "cocido", "fritura", "fresco", "al vapor", "asado", "tostado", "horneado",
-                           "salteado", "puré"]
-        self.pro_coc_opts = ["asado", "al vapor", "fritura", "horneado", "asado", "sofrito"]
+        self.nat_opts = ["Cualquiera", "Vegana", "Carnica"]
+        self.flav_opts = ["Cualquiera", "Dulce", "Salado", "Amargo", "Acido", "Umami"]
+        self.pro_ori_opts = ["Cualquiera", "Pollo", "Pescado", "Cerdo", "Res", "Marisco"]
+        self.tex_opts = ["Cualquiera", "Suave", "Dura"]
+        self.dri_cat_opts = ["Cualquiera", "Soda", "Natural", "Batido"]
+        self.temp_opts = ["Cualquiera", "Caliente", "Frio", "Tibio"]
+        self.dri_base_opts = ["Cualquiera", "Agua", "Leche", "Gas"]
+        self.gar_cat_opts = ["Cualquiera", "Grano", "Tuberculo", "Verdura", "Pan"]
+        self.size_opts = ["Cualquiera", "Pequeño", "Mediano", "Grande"]
+        self.g_coc_opts = ["Cualquiera", "Cocido", "Fritura", "Fresco", "Al vapor", "Asado", "Tostado", "Horneado",
+                           "Salteado", "Puré"]
+        self.pro_coc_opts = ["Cualquiera", "Asado", "Al vapor", "Fritura", "Horneado", "Asado", "Sofrito"]
         self.col_hdr = ["Bebida", "Proteína", "Guarnición 1", "Guarnición 2", "Guarnición 3", "Postre", "Precio ($)",
                         "Calorías (Kcal)"]
 
         # Naturaleza Dietetica
-        self.nat_lyt = Qtw.QVBoxLayout()
-        self.nat_lbl = Qtw.QLabel("Naturaleza Dietética")
-        self.nat_lbl.setAlignment(Qt.AlignCenter)
-        self.nat_lyt.addWidget(self.nat_lbl)
-        self.nat_cbox = Qtw.QComboBox()
-        self.nat_cbox.addItems(self.nat_opts)
-        self.nat_lyt.addWidget(self.nat_cbox)
+        self.diet_nat_lyt = Qtw.QVBoxLayout()
+        self.diet_nat_lbl = Qtw.QLabel("Naturaleza Dietética")
+        self.diet_nat_lbl.setAlignment(Qt.AlignCenter)
+        self.diet_nat_lyt.addWidget(self.diet_nat_lbl)
+        self.diet_nat_cbox = Qtw.QComboBox()
+        self.diet_nat_cbox.addItems(self.nat_opts)
+        self.diet_nat_lyt.addWidget(self.diet_nat_cbox)
 
         # Desayuno, Almuerzo y Cena
         self.check_lyt = Qtw.QHBoxLayout()
@@ -88,7 +88,7 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.gen_lyt = Qtw.QHBoxLayout()
         self.gen_lbl = Qtw.QLabel("General:")
         self.gen_lyt.addWidget(self.gen_lbl)
-        self.gen_lyt.addLayout(self.nat_lyt)
+        self.gen_lyt.addLayout(self.diet_nat_lyt)
         self.gen_lyt.addLayout(self.time_lyt)
         self.gen_lyt.addLayout(self.pri_lyt)
         self.gen_lyt.addLayout(self.cal_lyt)
@@ -101,7 +101,7 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.pro_fla_lyt.addWidget(self.pro_fla_lbl)
         self.pro_fla_lbl.setAlignment(Qt.AlignCenter)
         self.pro_fla_cbox = Qtw.QComboBox()
-        self.pro_fla_cbox.addItems(self.des_opts)
+        self.pro_fla_cbox.addItems(self.flav_opts)
         self.pro_fla_lyt.addWidget(self.pro_fla_cbox)
 
         # Origin
@@ -150,7 +150,7 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.dri_fla_lyt.addWidget(self.dri_fla_lbl)
         self.dri_fla_lbl.setAlignment(Qt.AlignCenter)
         self.dri_fla_cbox = Qtw.QComboBox()
-        self.dri_fla_cbox.addItems(self.des_opts)
+        self.dri_fla_cbox.addItems(self.flav_opts)
         self.dri_fla_lyt.addWidget(self.dri_fla_cbox)
 
         self.dri_cat_lyt = Qtw.QVBoxLayout()
@@ -193,7 +193,7 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.gar1_fla_lyt.addWidget(self.gar1_fla_lbl)
         self.gar1_fla_lbl.setAlignment(Qt.AlignCenter)
         self.gar1_fla_cbox = Qtw.QComboBox()
-        self.gar1_fla_cbox.addItems(self.des_opts)
+        self.gar1_fla_cbox.addItems(self.flav_opts)
         self.gar1_fla_lyt.addWidget(self.gar1_fla_cbox)
 
         self.gar1_cat_lyt = Qtw.QVBoxLayout()
@@ -233,7 +233,7 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.gar2_fla_lyt.addWidget(self.gar2_fla_lbl)
         self.gar2_fla_lbl.setAlignment(Qt.AlignCenter)
         self.gar2_fla_cbox = Qtw.QComboBox()
-        self.gar2_fla_cbox.addItems(self.des_opts)
+        self.gar2_fla_cbox.addItems(self.flav_opts)
         self.gar2_fla_lyt.addWidget(self.gar2_fla_cbox)
 
         self.g2_cat_lyt = Qtw.QVBoxLayout()
@@ -273,7 +273,7 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.gar3_fla_lyt.addWidget(self.gar3_fla_lbl)
         self.gar3_fla_lbl.setAlignment(Qt.AlignCenter)
         self.gar3_fla_cbox = Qtw.QComboBox()
-        self.gar3_fla_cbox.addItems(self.des_opts)
+        self.gar3_fla_cbox.addItems(self.flav_opts)
         self.gar3_fla_lyt.addWidget(self.gar3_fla_cbox)
 
         self.gar3_cat_lyt = Qtw.QVBoxLayout()
@@ -313,7 +313,7 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.des_fla_lyt.addWidget(self.des_fla_lbl)
         self.des_fla_lbl.setAlignment(Qt.AlignCenter)
         self.des_fla_cbox = Qtw.QComboBox()
-        self.des_fla_cbox.addItems(self.des_opts)
+        self.des_fla_cbox.addItems(self.flav_opts)
         self.des_fla_lyt.addWidget(self.des_fla_cbox)
 
         self.des_tex_lyt = Qtw.QVBoxLayout()
@@ -342,10 +342,10 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.opts_btn = Qtw.QPushButton("Buscar Opciones")
         self.opts_btn.clicked.connect(self.show_menu_items)
 
-        self.table = Qtw.QTableWidget(0, len(self.col_hdr))
-        self.table.setHorizontalHeaderLabels(self.col_hdr)
-        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.data_tbl = Qtw.QTableWidget(0, len(self.col_hdr))
+        self.data_tbl.setHorizontalHeaderLabels(self.col_hdr)
+        self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         self.select_opt_btn = Qtw.QPushButton("Seleccionar Opción")
         self.select_opt_btn.clicked.connect(self.select_option)
@@ -358,7 +358,7 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.main_lyt.addLayout(self.gar3_lyt)
         self.main_lyt.addLayout(self.des_lyt)
         self.main_lyt.addWidget(self.opts_btn)
-        self.main_lyt.addWidget(self.table)
+        self.main_lyt.addWidget(self.data_tbl)
         self.main_lyt.addWidget(self.select_opt_btn)
         self.main_lyt.setAlignment(Qt.AlignCenter)
 
@@ -376,10 +376,10 @@ class HealthyMenuWindow(Qtw.QWidget):
             opts = {
                 "max_cals": float(self.cal_tbox.text()),
                 "max_pre": float(self.pri_tbox.text()),
-                "br": int(self.br_chbox.isChecked()),
-                "lu": int(self.lu_chbox.isChecked()),
-                "di": int(self.lu_chbox.isChecked()),
-                "nat": self.nat_cbox.currentText().lower(),
+                "br": dbc.DBConn.boolean_to_words(self.br_chbox.isChecked()).lower(),
+                "lu": dbc.DBConn.boolean_to_words(self.lu_chbox.isChecked()).lower(),
+                "di": dbc.DBConn.boolean_to_words(self.lu_chbox.isChecked()).lower(),
+                "nat": self.diet_nat_cbox.currentText().lower(),
                 "dri_fla": self.dri_fla_cbox.currentText().lower(),
                 "dri_cat": self.dri_cat_cbox.currentText().lower(),
                 "dri_temp": self.dri_temp_cbox.currentText().lower(),
@@ -413,24 +413,23 @@ class HealthyMenuWindow(Qtw.QWidget):
     def fill_table(self, tuple_list):
         # Ensure that the number of rows and columns is set properly
         num_columns = len(self.col_hdr)
-        self.table.setColumnCount(num_columns)
+        self.data_tbl.setColumnCount(num_columns)
 
         # Clear the table first, in case it already contains data
-        self.table.setRowCount(0)
+        self.data_tbl.setRowCount(0)
 
         # Set the number of rows to match the number of tuples
-        self.table.setRowCount(len(tuple_list))
+        self.data_tbl.setRowCount(len(tuple_list))
 
         for row, data in enumerate(tuple_list):
             for col, item in enumerate(data):
                 item = Qtw.QTableWidgetItem(str(item))
-                self.table.setItem(row, col, item)
+                self.data_tbl.setItem(row, col, item)
 
-        self.table.resizeColumnsToContents()
+        self.data_tbl.resizeColumnsToContents()
 
-    def show_menu_items(self, quantity):
+    def show_menu_items(self):
         qu_opts = self.get_options()
-        print(qu_opts)
         query = self.pl_menu.menu_query(999, qu_opts["max_cals"], qu_opts["max_pre"], qu_opts["br"], qu_opts["lu"],
                                         qu_opts["di"], qu_opts["nat"], qu_opts["dri_fla"], qu_opts["dri_cat"],
                                         qu_opts["dri_temp"], qu_opts["dri_base"], qu_opts["pro_fla"],
@@ -440,13 +439,12 @@ class HealthyMenuWindow(Qtw.QWidget):
                                         qu_opts["gar2_coc"], qu_opts["gar3_fla"], qu_opts["gar3_cat"],
                                         qu_opts["gar3_size"], qu_opts["gar3_coc"], qu_opts["des_fla"],
                                         qu_opts["des_tex"], qu_opts["des_temp"])
-        for q in query:
-            print(q)
-        self.fill_table(query)
+        capitalized_query = crud.capitalize_tuples(query)
+        self.fill_table(capitalized_query)
 
     def get_selected_row(self):
         try:
-            selected_row = self.table.currentRow()
+            selected_row = self.data_tbl.currentRow()
             return selected_row
         except Exception as e:
             print(f"Error: {e}")
@@ -456,7 +454,7 @@ class HealthyMenuWindow(Qtw.QWidget):
             combo = []
             selected_row = self.get_selected_row()
             for i in range(len(self.col_hdr)):
-                combo.append(self.table.item(selected_row, i).text())
+                combo.append(self.data_tbl.item(selected_row, i).text())
             order = ordr.Order(
                 id_order=self.get_last_id() + 1,
                 description=f"{combo[0]} + {combo[1]} + {combo[2]} + {combo[3]} + {combo[4]} + {combo[5]}",
@@ -482,7 +480,7 @@ class HealthyMenuWindow(Qtw.QWidget):
 
 if __name__ == "__main__":
     app = Qtw.QApplication(sys.argv)
-    healthy = hm.HealthyMenu()
+    healthy = hm.HealthyMenu(dbc.DBConn("restaurante", "postgres", "1234", "localhost", "5432"))
     client = clnt.Client(5, "Joshua")
     mw = HealthyMenuWindow(healthy, client)
 

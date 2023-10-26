@@ -3,6 +3,7 @@ import PyQt5.QtWidgets as Qtw
 from PyQt5.QtCore import Qt as Qt
 import client as clnt
 
+
 class OrderWindow(Qtw.QDialog):
     def __init__(self, client):
         super().__init__()
@@ -28,19 +29,19 @@ class OrderWindow(Qtw.QDialog):
 
         # Set table
         self.col_hdr = ["ID", "Descripción", "Precio ($)", "Calorias (Kcal)"]
-        self.table = Qtw.QTableWidget(0, len(self.col_hdr))
-        self.table.verticalHeader().setVisible(False)
-        self.table.setHorizontalHeaderLabels(self.col_hdr)
-        self.table.setEditTriggers(Qtw.QAbstractItemView.NoEditTriggers)
-        self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.data_tbl = Qtw.QTableWidget(0, len(self.col_hdr))
+        self.data_tbl.verticalHeader().setVisible(False)
+        self.data_tbl.setHorizontalHeaderLabels(self.col_hdr)
+        self.data_tbl.setEditTriggers(Qtw.QAbstractItemView.NoEditTriggers)
+        self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
         # Delete btn
         self.delete_order_btn = Qtw.QPushButton("Eliminar")
         #self.delete_client_btn.clicked.connect(self.full_delete)
 
         self.main_lyt.addLayout(self.add_order_lyt)
-        self.main_lyt.addWidget(self.table)
+        self.main_lyt.addWidget(self.data_tbl)
         self.main_lyt.addWidget(self.delete_order_btn)
         self.setLayout(self.main_lyt)
 
