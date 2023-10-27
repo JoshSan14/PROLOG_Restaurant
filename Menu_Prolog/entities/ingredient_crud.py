@@ -2,9 +2,7 @@ import sys
 import PyQt5.QtWidgets as Qtw
 import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt as Qt
-import db_conn as dbc
 from abc import ABC, abstractmethod
-from ingredient import Ingredient
 
 
 class IngredientCRUD(Qtw.QDialog):

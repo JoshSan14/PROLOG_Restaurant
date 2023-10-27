@@ -5,7 +5,7 @@ class RegularMenu:
         self.price = 0
 
 
-class Plate:
+class Plate(RegularMenu):
     def __init__(self, id_regular_menu, id_protein, id_garrison1, id_garrison2, id_garrison3):
         super().__init__(id_regular_menu)
         self.id_protein = id_protein
@@ -14,7 +14,7 @@ class Plate:
         self.id_garrison3 = id_garrison3
 
 
-class Combo:
+class Combo(Plate):
     def __init__(self, id_regular_menu, id_protein, id_garrison1, id_garrison2, id_garrison3, id_drink, id_dessert):
         super().__init__(id_regular_menu, id_protein, id_garrison1, id_garrison2, id_garrison3)
         self.id_drink = id_drink
