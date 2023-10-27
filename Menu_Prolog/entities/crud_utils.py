@@ -1,3 +1,4 @@
+import sys
 import PyQt5.QtWidgets as Qtw
 import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt as Qt
@@ -85,3 +86,7 @@ class Utils:
             capitalized_tuple = tuple(word.capitalize() if isinstance(word, str) else word for word in item)
             capitalized_tuples.append(capitalized_tuple)
         return capitalized_tuples
+
+    @staticmethod
+    def open_dialog(dialog):
+        dialog.exec_()
