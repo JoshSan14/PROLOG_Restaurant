@@ -4,9 +4,9 @@ import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt as Qt
 import db_conn as dbc
 from crud_utils import Utils as Utl
-from ingredient_factory import ProteinFactory as Prf
+from factory_ingredient import ProteinFactory as Prf
 from ingredient import Protein as Pr
-from ingredient_crud import IngredientCRUD
+from gui_crud_ingredient import IngredientCRUD
 
 
 class ProteinCRUD(IngredientCRUD):
@@ -14,11 +14,6 @@ class ProteinCRUD(IngredientCRUD):
         super().__init__(db_conn, protein)
 
         self.protein = Pr()
-
-        self.col_hdr = ["ID", "Nombre", "Naturaleza Dietética", "Desayuno", "Almuerzo", "Cena", "Sabor", "Origen",
-                        "Textura", "Método de Cocción", "Calorías (Kcal)", "Precio ($)"]
-        self.col_ord = ["id", "nombre", "naturaleza_dietetica", "desayuno", "almuerzo", "cena", "sabor", "origen",
-                        "textura", "metodo_coccion", "calorias", "precio"]
 
         # Add a title
         self.setWindowTitle("Proteína")
@@ -54,8 +49,8 @@ class ProteinCRUD(IngredientCRUD):
         self.cook_met_lyt.addWidget(self.cook_met_cbox)
 
         # Data Table
-        self.data_tbl = Qtw.QTableWidget(0, len(self.col_hdr))
-        self.data_tbl.setHorizontalHeaderLabels(self.col_hdr)
+        self.data_tbl = Qtw.QTableWidget(0, len(self.protein.col_hdr))
+        self.data_tbl.setHorizontalHeaderLabels(self.protein.col_hdr)
         self.data_tbl.verticalHeader().setVisible(False)
         self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -106,12 +101,11 @@ class ProteinCRUD(IngredientCRUD):
 
     def upload_object(self):
         try:
-            record = Utl.get_single_record(self.db_conn, self.protein.table_name, self.data_tbl, self.col_ord)
+            record = Utl.get_single_record(self.db_conn, self.protein.table_name, self.data_tbl, self.protein.col_ord)
             self.protein = Prf.create_ingredient(id_ingredient=record[0], name=record[1], cals=record[10],
-                                                 diet_nat=record[2],
-                                                 flavor=record[6], price=record[11], breakfast=record[3], lunch=record[4],
-                                                 dinner=record[5], origin=record[7], texture=record[8],
-                                                 cook_met=record[9])
+                                                 diet_nat=record[2], flavor=record[6], price=record[11],
+                                                 breakfast=record[3], lunch=record[4], dinner=record[5],
+                                                 origin=record[7], texture=record[8], cook_met=record[9])
             self.locate_rec(record)
         except Exception as e:
             print(f"Error in input: {e}")
@@ -159,7 +153,7 @@ class ProteinCRUD(IngredientCRUD):
             print(f"Error inserting record: {e}")
 
     def load_recs(self):
-        Utl.load_values(self.db_conn, self.protein.table_name, self.col_ord, self.data_tbl)
+        Utl.load_values(self.db_conn, self.protein.table_name, self.protein.col_ord, self.data_tbl)
 
     def update_rec(self):
         try:

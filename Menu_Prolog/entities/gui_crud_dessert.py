@@ -4,9 +4,9 @@ import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt as Qt
 import db_conn as dbc
 from crud_utils import Utils as Utl
-from ingredient_factory import DessertFactory as Def
+from factory_ingredient import DessertFactory as Def
 from ingredient import Dessert as De
-from ingredient_crud import IngredientCRUD
+from gui_crud_ingredient import IngredientCRUD
 
 
 class DrinkCRUD(IngredientCRUD):
@@ -14,11 +14,6 @@ class DrinkCRUD(IngredientCRUD):
         super().__init__(db_conn, dessert)
 
         self.dessert = De()
-
-        self.col_hdr = ["ID", "Nombre", "Naturaleza Dietética", "Desayuno", "Almuerzo", "Cena", "Sabor", "Textura",
-                        "Temperatura", "Calorías (Kcal)", "Precio ($)"]
-        self.col_ord = ["id", "nombre", "naturaleza_dietetica", "desayuno", "almuerzo", "cena", "sabor", "textura",
-                        "temperatura", "calorias", "precio"]
 
         # Add a title
         self.setWindowTitle("Postres")
@@ -44,10 +39,9 @@ class DrinkCRUD(IngredientCRUD):
         self.temp_cbox.addItems(self.dessert.temp_opts)
         self.temp_lyt.addWidget(self.temp_cbox)
 
-
         # Data Table
-        self.data_tbl = Qtw.QTableWidget(0, len(self.col_hdr))
-        self.data_tbl.setHorizontalHeaderLabels(self.col_hdr)
+        self.data_tbl = Qtw.QTableWidget(0, len(self.dessert.col_hdr))
+        self.data_tbl.setHorizontalHeaderLabels(self.dessert.col_hdr)
         self.data_tbl.verticalHeader().setVisible(False)
         self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -96,7 +90,7 @@ class DrinkCRUD(IngredientCRUD):
 
     def upload_object(self):
         try:
-            record = Utl.get_single_record(self.db_conn, self.dessert.table_name, self.data_tbl, self.col_ord)
+            record = Utl.get_single_record(self.db_conn, self.dessert.table_name, self.data_tbl, self.dessert.col_ord)
             self.dessert = Def.create_ingredient(id_ingredient=record[0], name=record[1], cals=record[9],
                                                  diet_nat=record[2],
                                                  flavor=record[6], price=record[10], breakfast=record[3], lunch=record[4],
@@ -146,7 +140,7 @@ class DrinkCRUD(IngredientCRUD):
             print(f"Error inserting record: {e}")
 
     def load_recs(self):
-        Utl.load_values(self.db_conn, self.dessert.table_name, self.col_ord, self.data_tbl)
+        Utl.load_values(self.db_conn, self.dessert.table_name, self.dessert.col_ord, self.data_tbl)
 
     def update_rec(self):
         try:

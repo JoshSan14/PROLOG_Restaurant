@@ -48,7 +48,7 @@ class OrderWindow(Qtw.QDialog):
         self.show()
 
 if __name__ == "__main__":
-    # Este código se ejecutará solo cuando table_gui.py se ejecute como script
+    # Este código se ejecutará solo cuando gui_table.py se ejecute como script
     cliente = clnt.Client(1,"Luis")
     app = Qtw.QApplication(sys.argv)  # Crear una aplicación de PyQt
     ventana = OrderWindow(cliente)

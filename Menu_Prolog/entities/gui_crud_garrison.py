@@ -4,9 +4,9 @@ import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt as Qt
 import db_conn as dbc
 from crud_utils import Utils as Utl
-from ingredient_factory import GarrisonFactory as Gaf
+from factory_ingredient import GarrisonFactory as Gaf
 from ingredient import Garrison as Ga
-from ingredient_crud import IngredientCRUD
+from gui_crud_ingredient import IngredientCRUD
 
 
 class GarrisonCRUD(IngredientCRUD):
@@ -14,11 +14,6 @@ class GarrisonCRUD(IngredientCRUD):
         super().__init__(db_conn, garrison)
 
         self.garrison = Ga()
-
-        self.col_hdr = ["ID", "Nombre", "Naturaleza Dietética", "Desayuno", "Almuerzo", "Cena", "Sabor", "Categoria",
-                        "Tamaño", "Método de Cocción", "Calorías (Kcal)", "Precio ($)"]
-        self.col_ord = ["id", "nombre", "naturaleza_dietetica", "desayuno", "almuerzo", "cena", "sabor", "categoria",
-                        "tamano", "metodo_coccion", "calorias", "precio"]
 
         # Add a title
         self.setWindowTitle("Guarniciones")
@@ -54,8 +49,8 @@ class GarrisonCRUD(IngredientCRUD):
         self.cook_met_lyt.addWidget(self.cook_met_cbox)
 
         # Data Table
-        self.data_tbl = Qtw.QTableWidget(0, len(self.col_hdr))
-        self.data_tbl.setHorizontalHeaderLabels(self.col_hdr)
+        self.data_tbl = Qtw.QTableWidget(0, len(self.garrison.col_hdr))
+        self.data_tbl.setHorizontalHeaderLabels(self.garrison.col_hdr)
         self.data_tbl.verticalHeader().setVisible(False)
         self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -106,7 +101,7 @@ class GarrisonCRUD(IngredientCRUD):
 
     def upload_object(self):
         try:
-            record = Utl.get_single_record(self.db_conn, self.garrison.table_name, self.data_tbl, self.col_ord)
+            record = Utl.get_single_record(self.db_conn, self.garrison.table_name, self.data_tbl, self.garrison.col_ord)
             self.garrison = Gaf.create_ingredient(id_ingredient=record[0], name=record[1], cals=record[10],
                                                   diet_nat=record[2],flavor=record[6], price=record[11],
                                                   breakfast=record[3], lunch=record[4],  dinner=record[5],
@@ -158,7 +153,7 @@ class GarrisonCRUD(IngredientCRUD):
             print(f"Error inserting record: {e}")
 
     def load_recs(self):
-        Utl.load_values(self.db_conn, self.garrison.table_name, self.col_ord, self.data_tbl)
+        Utl.load_values(self.db_conn, self.garrison.table_name, self.garrison.col_ord, self.data_tbl)
 
     def update_rec(self):
         try:

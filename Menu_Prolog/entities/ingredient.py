@@ -36,6 +36,10 @@ class Drink(Ingredient):
         self.cat_opts = ["Soda", "Natural", "Batido"]
         self.temp_opts = ["Caliente", "Frio", "Tibio"]
         self.base_opts = ["Agua", "Leche", "Gas"]
+        self.col_ord = ["id", "nombre", "naturaleza_dietetica", "desayuno", "almuerzo", "cena", "sabor", "categoria",
+                        "temperatura", "base", "calorias", "precio"]
+        self.col_hdr = ["ID", "Nombre", "Naturaleza Dietética", "Desayuno", "Almuerzo", "Cena", "Sabor", "Categoria",
+                        "Temperatura", "Base", "Calorías (Kcal)", "Precio ($)"]
 
     def to_dict(self):
         return {"nombre": self.name, "calorias": self.cals,
@@ -57,6 +61,10 @@ class Protein(Ingredient):
         self.ori_opts = ["Pollo", "Pescado", "Cerdo", "Res", "Marisco"]
         self.tex_opts = ["Suave", "Dura"]
         self.cook_met_opts = ["Asado", "Al vapor", "Fritura", "Horneado", "Asado", "Sofrito"]
+        self.col_ord = ["id", "nombre", "naturaleza_dietetica", "desayuno", "almuerzo", "cena", "sabor", "origen",
+                        "textura", "metodo_coccion", "calorias", "precio"]
+        self.col_hdr = ["ID", "Nombre", "Naturaleza Dietética", "Desayuno", "Almuerzo", "Cena", "Sabor", "Origen",
+                        "Textura", "Método de Cocción", "Calorías (Kcal)", "Precio ($)"]
 
     def to_dict(self):
         return {"nombre": self.name, "calorias": self.cals,
@@ -77,6 +85,10 @@ class Garrison(Ingredient):
         self.cat_opts = ["Grano", "Tuberculo", "Verdura", "Pan"]
         self.size_opts = ["Pequeño", "Mediano", "Grande"]
         self.cook_met_opts = ["Cocido", "Fritura", "Fresco", "Al vapor", "Asado", "Tostado", "Horneado", "Salteado", "Puré"]
+        self.col_ord = ["id", "nombre", "naturaleza_dietetica", "desayuno", "almuerzo", "cena", "sabor", "categoria",
+                        "tamano", "metodo_coccion", "calorias", "precio"]
+        self.col_hdr = ["ID", "Nombre", "Naturaleza Dietética", "Desayuno", "Almuerzo", "Cena", "Sabor", "Categoria",
+                        "Tamaño", "Método de Cocción", "Calorías (Kcal)", "Precio ($)"]
 
     def to_dict(self):
         return {"nombre": self.name, "calorias": self.cals,
@@ -95,6 +107,10 @@ class Dessert(Ingredient):
         self.table_name = "ingrediente.postre"  # Nombre de la tabla en la base de datos
         self.tex_opts = ["Suave", "Dura"]
         self.temp_opts = ["Caliente", "Frio", "Tibio"]
+        self.col_ord = ["id", "nombre", "naturaleza_dietetica", "desayuno", "almuerzo", "cena", "sabor", "textura",
+                        "temperatura", "calorias", "precio"]
+        self.col_hdr = ["ID", "Nombre", "Naturaleza Dietética", "Desayuno", "Almuerzo", "Cena", "Sabor", "Textura",
+                        "Temperatura", "Calorías (Kcal)", "Precio ($)"]
 
     def to_dict(self):
         return {"nombre": self.name, "calorias": self.cals,

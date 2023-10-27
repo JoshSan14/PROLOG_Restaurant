@@ -3,7 +3,7 @@ import PyQt5.QtWidgets as Qtw
 from PyQt5.QtCore import Qt
 import table as tbl
 import client as clnt
-import order_gui as ogui
+import gui_order as ogui
 
 
 class ClientWindow(Qtw.QDialog):
@@ -157,7 +157,7 @@ class ClientWindow(Qtw.QDialog):
             print(f"Error: {e} 6")
 
 if __name__ == "__main__":
-    # Este código se ejecutará solo cuando table_gui.py se ejecute como script
+    # Este código se ejecutará solo cuando gui_table.py se ejecute como script
     mesa = tbl.Table(1)
     app = Qtw.QApplication(sys.argv)  # Crear una aplicación de PyQt
     ventana = ClientWindow(mesa)

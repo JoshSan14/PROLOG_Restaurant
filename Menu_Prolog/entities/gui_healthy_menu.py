@@ -7,6 +7,8 @@ import client as clnt
 import order as ordr
 import db_conn as dbc
 from crud_utils import Utils as crud
+
+
 class HealthyMenuWindow(Qtw.QWidget):
     def __init__(self, healthy_menu, client):
         super().__init__()

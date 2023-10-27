@@ -4,8 +4,9 @@ import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt as Qt
 import db_conn as dbc
 from crud_utils import Utils as Utl
-from ingredient_factory import ProteinFactory as Prf
-from plate import Plate as Plt
+from factory_ingredient import ProteinFactory as Prf
+from regular_menu import Plate as Plt
+from ingredient import *
 
 
 class IngredientSelectLayout(Qtw.QVBoxLayout):
@@ -23,8 +24,13 @@ class IngredientSelectLayout(Qtw.QVBoxLayout):
 
 
 class IngredientSelectDialog(Qtw.QDialog):
-    def __init__(self, title, ingredient, col_hdr):
+    def __init__(self, title, db_conn, ingredient):
         super().__init__()
+
+        self.title = title0
+        self.db_conn = db_conn
+        self.ingredient = ingredient
+        self.plate_id = plate_id
 
         # Add a title
         self.setWindowTitle(f"Seleccionar {title}")
@@ -32,15 +38,16 @@ class IngredientSelectDialog(Qtw.QDialog):
         # Set layout
         self.main_lyt = Qtw.QVBoxLayout()
 
-        self.setFixedWidth(750)
+        self.setFixedWidth(550)
 
         # Data Table
-        self.data_tbl = Qtw.QTableWidget(0, len(col_hdr))
-        self.data_tbl.setHorizontalHeaderLabels(col_hdr)
+        self.data_tbl = Qtw.QTableWidget(0, len(ingredient.col_hdr))
+        self.data_tbl.setHorizontalHeaderLabels(ingredient.col_hdr)
         self.data_tbl.verticalHeader().setVisible(False)
         self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.data_tbl.resizeColumnsToContents()
+        self.data_tbl.itemClicked.connect(self.select_value)
 
         self.main_lyt.addWidget(self.data_tbl)
 
@@ -48,28 +55,34 @@ class IngredientSelectDialog(Qtw.QDialog):
 
         self.show()
 
+        Utl.load_values(self.db_conn, self.ingredient.table_name, self.ingredient.col_ord, self.data_tbl)
+
+    def select_value(self):
+        record = Utl.get_single_record(self.db_conn, self.ingredient, self.data_tbl, self.ingredient.col_ord)
+        if isinstance(self.ingredient, Drink):
+            print(record)
+
 
 class PlateCRUD(Qtw.QDialog):
     def __init__(self, db_conn):
         super().__init__()
 
-        self.col_hdr = []
+        # Ingredients:
+        self.drink = Drink()
+        self.protein = Protein()
+        self.garrison = Garrison()
+        self.dessert = Dessert()
 
+        # Plate
         self.plate = Plt()
+
+        self.col_hdr = []
 
         # Add a title
         self.setWindowTitle("Platos")
 
         # Set layout
         self.main_lyt = Qtw.QVBoxLayout()
-
-        # Name Layout
-        self.name_lyt = Qtw.QHBoxLayout()
-        self.name_lbl = Qtw.QLabel("Nombre:")
-        self.name_lbl.setAlignment(Qt.AlignCenter)
-        self.name_lyt.addWidget(self.name_lbl)
-        self.name_tbox = Qtw.QLineEdit()
-        self.name_lyt.addWidget(self.name_tbox)
 
         # Protein Layout
         self.pro_lyt = IngredientSelectLayout("Proteína")
@@ -113,7 +126,6 @@ class PlateCRUD(Qtw.QDialog):
         self.ingredient_lyt.addLayout(self.gar2_lyt)
         self.ingredient_lyt.addLayout(self.gar3_lyt)
 
-        self.main_lyt.addLayout(self.name_lyt)
         self.main_lyt.addLayout(self.ingredient_lyt)
         self.main_lyt.addLayout(self.btn_lyt)
         self.main_lyt.addWidget(self.data_tbl)
@@ -127,7 +139,8 @@ if __name__ == "__main__":
     db = dbc.DBConn("restaurante", "postgres", "1234", "localhost", "5432")
     app = Qtw.QApplication(sys.argv)
     mw = PlateCRUD(db)
-    mm = IngredientSelectDialog("Title", "ingredient", [])
+    dr = Drink()
+    mm = IngredientSelectDialog("Title", db, dr, dr)
 
     # Run the application
     sys.exit(app.exec_())
