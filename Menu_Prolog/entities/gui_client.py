@@ -4,11 +4,14 @@ from PyQt5.QtCore import Qt
 import table as tbl
 import client as clnt
 import gui_order as ogui
+from utils import Utils as Utl
+from db_conn import *
 
 
 class ClientWindow(Qtw.QDialog):
-    def __init__(self, rest_table):
+    def __init__(self, db_conn, rest_table):
         super().__init__()
+        self.db_conn = db_conn
         self.rest_table = rest_table
         self.client_count = self.get_last_id()
 
@@ -83,10 +86,11 @@ class ClientWindow(Qtw.QDialog):
 
     def full_delete(self):
         try:
-            selected_row = self.get_selected_row()
+            selected_row = self.data_tbl.currentRow()
             client = self.get_client()
             self.delete_client(client)
             self.delete_row(selected_row)
+            self.get_total_bill()
         except Exception as e:
             print(f"Error: {e}")
 
@@ -136,23 +140,17 @@ class ClientWindow(Qtw.QDialog):
 
     def get_total_bill(self):
         try:
-            total_bill = sum(client.bill for client in self.rest_table.clients)
+            total_bill = round(sum(client.bill for client in self.rest_table.clients), 2)
             self.rest_table.total_bill = total_bill
         except Exception as e:
-            print(f"Error: {e} alfa")
+            print(f"Error: {e}")
             return 0  # Return 0 in case of an error
-
-    def update_data_table(self):
-        pass
 
     def edit_order(self):
         try:
-            client = self.get_client()
-            order_window = ogui.OrderWindow(client)
-            order_window.setModal(True)
-            order_window.exec_()
+            Utl.open_dialog(ogui.OrderDialog(self.db_conn, self.get_client()))
             self.get_total_bill()
-            #Actualizar valores
+            self.load_data_table()
         except Exception as e:
             print(f"Error: {e} 6")
 
@@ -160,5 +158,7 @@ if __name__ == "__main__":
     # Este código se ejecutará solo cuando gui_table.py se ejecute como script
     mesa = tbl.Table(1)
     app = Qtw.QApplication(sys.argv)  # Crear una aplicación de PyQt
-    ventana = ClientWindow(mesa)
+    dbconn = DBConn("restaurante", "postgres", "1234", "localhost", "5432")
+    ventana = ClientWindow(dbconn, mesa)
+    ventana.show()
     sys.exit(app.exec_())

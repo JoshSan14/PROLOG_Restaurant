@@ -24,8 +24,6 @@ class HealthyMenu:
         for dato in data:
             formatted_data = []
             for item in dato:
-                #if isinstance(item, (int, bool)):
-                #    formatted_data.append(str(int(item) if isinstance(item, bool) else item))
                 if isinstance(item, float):
                     formatted_data.append(f'{round(item, 1)}')
                 else:
@@ -72,12 +70,7 @@ class HealthyMenu:
 
     def main(self):
         try:
-            # self.test_queries(query_ingredientes)
             self.test_queries()
-            #tst = self.menu_query(9999, 500, 50, 1, 1, 1, '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_',
-            #                      '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_')
-            # for i in tst:
-            #     print(i)
         except Exception as e:
             print(f"An error occurred: {str(e)}")
         finally:

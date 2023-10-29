@@ -6,15 +6,15 @@ import healthy_menu as hm
 import client as clnt
 import order as ordr
 import db_conn as dbc
-from crud_utils import Utils as crud
+from utils import Utils as Utl
 
 
-class HealthyMenuWindow(Qtw.QWidget):
+class HealthyMenuDialog(Qtw.QDialog):
     def __init__(self, healthy_menu, client):
         super().__init__()
 
         # plMenu instance
-        self.pl_menu = healthy_menu
+        self.healthy_menu = healthy_menu
 
         # Client
         self.client = client
@@ -365,7 +365,6 @@ class HealthyMenuWindow(Qtw.QWidget):
         self.main_lyt.setAlignment(Qt.AlignCenter)
 
         self.setLayout(self.main_lyt)
-        self.show()
 
     def map_values_to_symbol(self, word, symbol, dictionary):
         for key, value in dictionary.items():
@@ -432,16 +431,16 @@ class HealthyMenuWindow(Qtw.QWidget):
 
     def show_menu_items(self):
         qu_opts = self.get_options()
-        query = self.pl_menu.menu_query(999, qu_opts["max_cals"], qu_opts["max_pre"], qu_opts["br"], qu_opts["lu"],
-                                        qu_opts["di"], qu_opts["nat"], qu_opts["dri_fla"], qu_opts["dri_cat"],
-                                        qu_opts["dri_temp"], qu_opts["dri_base"], qu_opts["pro_fla"],
-                                        qu_opts["pro_ori"], qu_opts["pro_tex"], qu_opts["pro_coc"], qu_opts["gar1_fla"],
-                                        qu_opts["gar1_cat"], qu_opts["gar1_size"], qu_opts["gar1_coc"],
-                                        qu_opts["gar2_fla"], qu_opts["gar2_cat"], qu_opts["gar2_size"],
-                                        qu_opts["gar2_coc"], qu_opts["gar3_fla"], qu_opts["gar3_cat"],
-                                        qu_opts["gar3_size"], qu_opts["gar3_coc"], qu_opts["des_fla"],
-                                        qu_opts["des_tex"], qu_opts["des_temp"])
-        capitalized_query = crud.capitalize_tuples(query)
+        query = self.healthy_menu.menu_query(999, qu_opts["max_cals"], qu_opts["max_pre"], qu_opts["br"], qu_opts["lu"],
+                                             qu_opts["di"], qu_opts["nat"], qu_opts["dri_fla"], qu_opts["dri_cat"],
+                                             qu_opts["dri_temp"], qu_opts["dri_base"], qu_opts["pro_fla"],
+                                             qu_opts["pro_ori"], qu_opts["pro_tex"], qu_opts["pro_coc"], qu_opts["gar1_fla"],
+                                             qu_opts["gar1_cat"], qu_opts["gar1_size"], qu_opts["gar1_coc"],
+                                             qu_opts["gar2_fla"], qu_opts["gar2_cat"], qu_opts["gar2_size"],
+                                             qu_opts["gar2_coc"], qu_opts["gar3_fla"], qu_opts["gar3_cat"],
+                                             qu_opts["gar3_size"], qu_opts["gar3_coc"], qu_opts["des_fla"],
+                                             qu_opts["des_tex"], qu_opts["des_temp"])
+        capitalized_query = Utl.capitalize_tuples(query)
         self.fill_table(capitalized_query)
 
     def get_selected_row(self):
@@ -457,16 +456,14 @@ class HealthyMenuWindow(Qtw.QWidget):
             selected_row = self.get_selected_row()
             for i in range(len(self.col_hdr)):
                 combo.append(self.data_tbl.item(selected_row, i).text())
+            formatted_combo = Utl.format_string(combo, " + ", 0, 5)
             order = ordr.Order(
                 id_order=self.get_last_id() + 1,
-                description=f"{combo[0]} + {combo[1]} + {combo[2]} + {combo[3]} + {combo[4]} + {combo[5]}",
-                price=combo[6],
-                cals=combo[7]
+                description=formatted_combo,
+                cals=round(float(combo[6]), 2),
+                price=round(float(combo[7]), 2)
             )
             self.client.order.append(order)
-            print("\n")
-            for ord in self.client.order:
-                print(ord.description)
         except Exception as e:
             print(f"Error: {e} 1")
 
@@ -484,7 +481,7 @@ if __name__ == "__main__":
     app = Qtw.QApplication(sys.argv)
     healthy = hm.HealthyMenu(dbc.DBConn("restaurante", "postgres", "1234", "localhost", "5432"))
     client = clnt.Client(5, "Joshua")
-    mw = HealthyMenuWindow(healthy, client)
+    mw = HealthyMenuDialog(healthy, client)
 
     # Run the application
     sys.exit(app.exec_())

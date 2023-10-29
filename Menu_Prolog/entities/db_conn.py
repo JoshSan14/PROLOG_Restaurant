@@ -103,3 +103,22 @@ class DBConn:
         cur.execute(delete_query, [record_id])
         self.conn.commit()
         cur.close()
+
+    def execute_custom_query(self, sql_query, parameters=None, decimal_places=2):
+        try:
+            cur = self.conn.cursor()
+
+            if parameters:
+                cur.execute(sql_query, parameters)
+            else:
+                cur.execute(sql_query)
+
+            records = cur.fetchall()
+            t_records = self.convert_and_truncate_records(records, decimal_places)
+            cur.close()
+
+            return t_records
+
+        except (Exception, psycopg2.Error) as error:
+            print(f"Error executing custom SQL query: {error}")
+            return None

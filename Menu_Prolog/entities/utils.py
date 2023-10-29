@@ -19,17 +19,21 @@ class Utils:
         try:
             records = db_conn.retrieve_all_records_with_custom_order(table_name, col_ord)
 
-            data_tbl.setRowCount(0)
+            Utils.add_data_to_table(data_tbl, records)
 
-            for row_num, record in enumerate(records):
-                data_tbl.insertRow(row_num)
-                for col_num, value in enumerate(record):
-                    item = Qtw.QTableWidgetItem(str(value))
-                    data_tbl.setItem(row_num, col_num, item)
-
-            data_tbl.resizeColumnsToContents()
         except Exception as e:
             print(f"Error loading records: {e}")
+
+    @staticmethod
+    def add_data_to_table(data_tbl, records):
+        data_tbl.setRowCount(0)
+
+        for row_num, record in enumerate(records):
+            data_tbl.insertRow(row_num)
+            for col_num, value in enumerate(record):
+                item = Qtw.QTableWidgetItem(str(value))
+                data_tbl.setItem(row_num, col_num, item)
+        data_tbl.resizeColumnsToContents()
 
     @staticmethod
     def update_values(db_conn, table_name, id_column, id_object, update_dict):
@@ -90,3 +94,9 @@ class Utils:
     @staticmethod
     def open_dialog(dialog):
         dialog.exec_()
+
+    @staticmethod
+    def format_string(str_list, symbol, start, end):
+        formatted_string = symbol.join([str(string) for string in str_list[start:end + 1]])
+        return formatted_string
+

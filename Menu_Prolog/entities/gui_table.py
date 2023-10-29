@@ -3,11 +3,15 @@ import PyQt5.QtWidgets as Qtw
 from PyQt5.QtCore import Qt
 import table as tbl
 import gui_client as cgui
+from utils import Utils as Utl
+from db_conn import *
 
 
-class TableWindow(Qtw.QWidget):
-    def __init__(self):
+class TableDialog(Qtw.QWidget):
+    def __init__(self, db_conn):
         super().__init__()
+
+        self.db_conn = db_conn
 
         # Set an empty list to add tables
         self.table_count = 0
@@ -74,7 +78,7 @@ class TableWindow(Qtw.QWidget):
 
     def full_delete(self):
         try:
-            selected_row = self.get_selected_row()
+            selected_row = self.data_tbl.currentRow()
             table = self.get_table()
             self.delete_table(table)
             self.delete_row(selected_row)
@@ -110,19 +114,15 @@ class TableWindow(Qtw.QWidget):
 
     def edit_clients(self):
         try:
-            table = self.get_table()
-            client_window = cgui.ClientWindow(table)
-            client_window.setModal(True)
-            client_window.exec_()
+            Utl.open_dialog(cgui.ClientWindow(self.db_conn, self.get_table()))
             self.update_data_table()
         except Exception as e:
             print(f"Error: {e} 6")
 
 
-
 if __name__ == "__main__":
     # Este código se ejecutará solo cuando gui_table.py se ejecute como script
-
+    dbconn = DBConn("restaurante", "postgres", "1234", "localhost", "5432")
     app = Qtw.QApplication(sys.argv)  # Crear una aplicación de PyQt
-    ventana = TableWindow()
+    ventana = TableDialog(dbconn)
     sys.exit(app.exec_())

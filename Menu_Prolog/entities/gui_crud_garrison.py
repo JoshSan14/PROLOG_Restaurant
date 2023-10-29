@@ -3,7 +3,7 @@ import PyQt5.QtWidgets as Qtw
 import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt as Qt
 import db_conn as dbc
-from crud_utils import Utils as Utl
+from utils import Utils as Utl
 from factory_ingredient import GarrisonFactory as Gaf
 from ingredient import Garrison as Ga
 from gui_crud_ingredient import IngredientCRUD
