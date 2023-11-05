@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SqlDialectMappings">
-    <file url="file://$PROJECT_DIR$/Menu_Prolog/entities/db_conn.py" dialect="PostgreSQL" />
-    <file url="file://$PROJECT_DIR$/Menu_Prolog/entities/gui_crud_combo.py" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/Menu_Prolog/entities/gui_crud_plate.py" dialect="GenericSQL" />
-    <file url="file://$PROJECT_DIR$/Menu_Prolog/entities/regular_menu.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Menu_Prolog/project/db_conn.py" dialect="PostgreSQL" />
+    <file url="file://$PROJECT_DIR$/Menu_Prolog/project/gui_crud_combo.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Menu_Prolog/project/gui_crud_plate.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Menu_Prolog/project/regular_menu.py" dialect="GenericSQL" />
   </component>
 </project>

@@ -34,6 +34,7 @@ class Utils:
                 item = Qtw.QTableWidgetItem(str(value))
                 data_tbl.setItem(row_num, col_num, item)
         data_tbl.resizeColumnsToContents()
+        data_tbl.resizeRowsToContents()
 
     @staticmethod
     def update_values(db_conn, table_name, id_column, id_object, update_dict):

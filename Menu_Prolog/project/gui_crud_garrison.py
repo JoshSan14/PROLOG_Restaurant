@@ -4,19 +4,19 @@ import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt as Qt
 import db_conn as dbc
 from utils import Utils as Utl
-from factory_ingredient import DrinkFactory as Drf
-from ingredient import Drink as Dr
+from factory_ingredient import GarrisonFactory as Gaf
+from ingredient import Garrison as Ga
 from gui_crud_ingredient import IngredientCRUD
 
 
-class DrinkCRUD(IngredientCRUD):
+class GarrisonCRUD(IngredientCRUD):
     def __init__(self, db_conn):
-        super().__init__(db_conn, drink)
+        super().__init__(db_conn, Ga())
 
-        self.drink = Dr()
+        self.garrison = Ga()
 
         # Add a title
-        self.setWindowTitle("Bebidas")
+        self.setWindowTitle("Guarniciones")
 
         # Set layout
         self.main_lyt = Qtw.QVBoxLayout()
@@ -27,30 +27,30 @@ class DrinkCRUD(IngredientCRUD):
         self.cat_lyt.addWidget(self.cat_lbl)
         self.cat_lbl.setAlignment(Qt.AlignCenter)
         self.cat_cbox = Qtw.QComboBox()
-        self.cat_cbox.addItems(self.drink.cat_opts)
+        self.cat_cbox.addItems(self.garrison.cat_opts)
         self.cat_lyt.addWidget(self.cat_cbox)
 
-        # Temp
-        self.temp_lyt = Qtw.QVBoxLayout()
-        self.temp_lbl = Qtw.QLabel("Temperatura")
-        self.temp_lyt.addWidget(self.temp_lbl)
-        self.temp_lbl.setAlignment(Qt.AlignCenter)
-        self.temp_cbox = Qtw.QComboBox()
-        self.temp_cbox.addItems(self.drink.temp_opts)
-        self.temp_lyt.addWidget(self.temp_cbox)
+        # Size
+        self.size_lyt = Qtw.QVBoxLayout()
+        self.size_lbl = Qtw.QLabel("Tamaño")
+        self.size_lyt.addWidget(self.size_lbl)
+        self.size_lbl.setAlignment(Qt.AlignCenter)
+        self.size_cbox = Qtw.QComboBox()
+        self.size_cbox.addItems(self.garrison.size_opts)
+        self.size_lyt.addWidget(self.size_cbox)
 
-        # Base
-        self.base_lyt = Qtw.QVBoxLayout()
-        self.base_lbl = Qtw.QLabel("Base")
-        self.base_lyt.addWidget(self.base_lbl)
-        self.base_lbl.setAlignment(Qt.AlignCenter)
-        self.base_cbox = Qtw.QComboBox()
-        self.base_cbox.addItems(self.drink.base_opts)
-        self.base_lyt.addWidget(self.base_cbox)
+        # Cooking Method
+        self.cook_met_lyt = Qtw.QVBoxLayout()
+        self.cook_met_lbl = Qtw.QLabel("Método de Cocción")
+        self.cook_met_lyt.addWidget(self.cook_met_lbl)
+        self.cook_met_lbl.setAlignment(Qt.AlignCenter)
+        self.cook_met_cbox = Qtw.QComboBox()
+        self.cook_met_cbox.addItems(self.garrison.cook_met_opts)
+        self.cook_met_lyt.addWidget(self.cook_met_cbox)
 
         # Data Table
-        self.data_tbl = Qtw.QTableWidget(0, len(self.drink.col_hdr))
-        self.data_tbl.setHorizontalHeaderLabels(self.drink.col_hdr)
+        self.data_tbl = Qtw.QTableWidget(0, len(self.garrison.col_hdr))
+        self.data_tbl.setHorizontalHeaderLabels(self.garrison.col_hdr)
         self.data_tbl.verticalHeader().setVisible(False)
         self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -64,8 +64,8 @@ class DrinkCRUD(IngredientCRUD):
         self.line2_lyt = Qtw.QHBoxLayout()
         self.line2_lyt.addLayout(self.fla_lyt)
         self.line2_lyt.addLayout(self.cat_lyt)
-        self.line2_lyt.addLayout(self.temp_lyt)
-        self.line2_lyt.addLayout(self.base_lyt)
+        self.line2_lyt.addLayout(self.size_lyt)
+        self.line2_lyt.addLayout(self.cook_met_lyt)
 
         self.line3_lyt = Qtw.QHBoxLayout()
         self.line3_lyt.addLayout(self.cal_lyt)
@@ -81,8 +81,6 @@ class DrinkCRUD(IngredientCRUD):
 
         self.load_recs()
 
-        self.show()
-
     def locate_rec(self, record):
         try:
             self.name_tbox.setText(record[1])
@@ -92,8 +90,8 @@ class DrinkCRUD(IngredientCRUD):
             Utl.set_checkbox_state(self.di_chbox, record[5])
             Utl.set_combobox_value(self.fla_cbox, record[6])
             Utl.set_combobox_value(self.cat_cbox, record[7])
-            Utl.set_combobox_value(self.temp_cbox, record[8])
-            Utl.set_combobox_value(self.base_cbox, record[9])
+            Utl.set_combobox_value(self.size_cbox, record[8])
+            Utl.set_combobox_value(self.cook_met_cbox, record[9])
             self.cal_tbox.setText(str(record[10]))
             self.pri_tbox.setText(str(record[11]))
         except Exception as e:
@@ -101,29 +99,28 @@ class DrinkCRUD(IngredientCRUD):
 
     def upload_object(self):
         try:
-            record = Utl.get_single_record(self.db_conn, self.drink.table_name, self.data_tbl, self.drink.col_ord)
-            self.drink = Drf.create_ingredient(id_ingredient=record[0], name=record[1], cals=record[10],
-                                               diet_nat=record[2],
-                                               flavor=record[6], price=record[11], breakfast=record[3], lunch=record[4],
-                                               dinner=record[5], category=record[7], temperature=record[8],
-                                               base=record[9])
+            record = Utl.get_single_record(self.db_conn, self.garrison.table_name, self.data_tbl, self.garrison.col_ord)
+            self.garrison = Gaf.create_ingredient(id_ingredient=record[0], name=record[1], cals=record[10],
+                                                  diet_nat=record[2],flavor=record[6], price=record[11],
+                                                  breakfast=record[3], lunch=record[4],  dinner=record[5],
+                                                  category=record[7], size=record[8], cook_met=record[9])
             self.locate_rec(record)
         except Exception as e:
             print(f"Error in input: {e}")
 
     def download_object(self):
         try:
-            self.drink.name = self.name_tbox.text().capitalize()
-            self.drink.cals = float(self.cal_tbox.text())
-            self.drink.diet_nat = self.diet_nat_cbox.currentText()
-            self.drink.flavor = self.fla_cbox.currentText()
-            self.drink.price = float(self.pri_tbox.text())
-            self.drink.breakfast = Utl.word_to_boolean(str(self.br_chbox.isChecked()))
-            self.drink.lunch = Utl.word_to_boolean(str(self.lu_chbox.isChecked()))
-            self.drink.dinner = Utl.word_to_boolean(str(self.di_chbox.isChecked()))
-            self.drink.category = self.cat_cbox.currentText()
-            self.drink.temperature = self.temp_cbox.currentText()
-            self.drink.base = self.base_cbox.currentText()
+            self.garrison.name = self.name_tbox.text().capitalize()
+            self.garrison.cals = float(self.cal_tbox.text())
+            self.garrison.diet_nat = self.diet_nat_cbox.currentText()
+            self.garrison.flavor = self.fla_cbox.currentText()
+            self.garrison.price = float(self.pri_tbox.text())
+            self.garrison.breakfast = Utl.word_to_boolean(str(self.br_chbox.isChecked()))
+            self.garrison.lunch = Utl.word_to_boolean(str(self.lu_chbox.isChecked()))
+            self.garrison.dinner = Utl.word_to_boolean(str(self.di_chbox.isChecked()))
+            self.garrison.category = self.cat_cbox.currentText()
+            self.garrison.temperature = self.size_cbox.currentText()
+            self.garrison.base = self.cook_met_cbox.currentText()
         except Exception as e:
             print(f"Error in input: {e}")
 
@@ -135,40 +132,40 @@ class DrinkCRUD(IngredientCRUD):
         self.diet_nat_cbox.setCurrentIndex(0)
         self.fla_cbox.setCurrentIndex(0)
         self.cat_cbox.setCurrentIndex(0)
-        self.temp_cbox.setCurrentIndex(0)
-        self.base_cbox.setCurrentIndex(0)
+        self.size_cbox.setCurrentIndex(0)
+        self.cook_met_cbox.setCurrentIndex(0)
 
         self.br_chbox.setChecked(False)
         self.lu_chbox.setChecked(False)
         self.di_chbox.setChecked(False)
 
-        self.drink = Dr()
+        self.garrison = Ga()
 
     def insert_rec(self):
         try:
             self.download_object()
-            Utl.insert_values(self.db_conn, self.drink.table_name, self.drink.to_dict())
+            Utl.insert_values(self.db_conn, self.garrison.table_name, self.garrison.to_dict())
             self.load_recs()
             self.clean_inputs()
         except Exception as e:
             print(f"Error inserting record: {e}")
 
     def load_recs(self):
-        Utl.load_values(self.db_conn, self.drink.table_name, self.drink.col_ord, self.data_tbl)
+        Utl.load_values(self.db_conn, self.garrison.table_name, self.garrison.col_ord, self.data_tbl)
 
     def update_rec(self):
         try:
-            if self.drink.id_object > 0:
+            if self.garrison.id_object > 0:
                 self.download_object()
-                Utl.update_values(self.db_conn, self.drink.table_name, self.drink.id_column,
-                                  self.drink.id_object, self.drink.to_dict())
+                Utl.update_values(self.db_conn, self.garrison.table_name, self.garrison.id_column,
+                                  self.garrison.id_object, self.garrison.to_dict())
                 self.load_recs()
         except Exception as e:
             print(f"Error in update: {e}")
 
     def delete_rec(self):
         try:
-            Utl.delete_values(self.db_conn, self.drink.table_name, self.data_tbl)
+            Utl.delete_values(self.db_conn, self.garrison.table_name, self.data_tbl)
             self.load_recs()
         except Exception as e:
             print(f"Error deleting record: {e}")
@@ -177,8 +174,8 @@ class DrinkCRUD(IngredientCRUD):
 if __name__ == "__main__":
     db = dbc.DBConn("restaurante", "postgres", "1234", "localhost", "5432")
     app = Qtw.QApplication(sys.argv)
-    drink = Dr()
-    mw = DrinkCRUD(db)
+    garrison = Ga()
+    mw = GarrisonCRUD(db)
 
     # Run the application
     sys.exit(app.exec_())

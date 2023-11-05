@@ -9,9 +9,9 @@ from ingredient import Dessert as De
 from gui_crud_ingredient import IngredientCRUD
 
 
-class DrinkCRUD(IngredientCRUD):
+class DessertCRUD(IngredientCRUD):
     def __init__(self, db_conn):
-        super().__init__(db_conn, dessert)
+        super().__init__(db_conn, De())
 
         self.dessert = De()
 
@@ -70,8 +70,6 @@ class DrinkCRUD(IngredientCRUD):
         self.setLayout(self.main_lyt)
 
         self.load_recs()
-
-        self.show()
 
     def locate_rec(self, record):
         try:
@@ -164,7 +162,7 @@ if __name__ == "__main__":
     db = dbc.DBConn("restaurante", "postgres", "1234", "localhost", "5432")
     app = Qtw.QApplication(sys.argv)
     dessert = De()
-    mw = DrinkCRUD(db)
+    mw = DessertCRUD(db)
 
     # Run the application
     sys.exit(app.exec_())

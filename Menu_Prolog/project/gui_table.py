@@ -7,46 +7,48 @@ from utils import Utils as Utl
 from db_conn import *
 
 
-class TableDialog(Qtw.QWidget):
+class TableDialog(Qtw.QDialog):
     def __init__(self, db_conn):
-        super().__init__()
+        try:
+            super().__init__()
 
-        self.db_conn = db_conn
+            self.db_conn = db_conn
 
-        # Set an empty list to add tables
-        self.table_count = 0
-        self.table_list = []
+            # Set an empty list to add tables
+            self.table_count = 0
+            self.table_list = []
 
-        # Add a title
-        self.setWindowTitle("Mesas")
-        # Set layout
-        self.main_lyt = Qtw.QVBoxLayout()
+            # Add a title
+            self.setWindowTitle("Mesas")
+            # Set layout
+            self.main_lyt = Qtw.QVBoxLayout()
 
-        # Set table
-        self.col_hdr = ["ID Mesa", "Nº Clientes", "Total"]
-        self.data_tbl = Qtw.QTableWidget(0, len(self.col_hdr))
-        self.data_tbl.verticalHeader().setVisible(False)
-        self.data_tbl.setHorizontalHeaderLabels(self.col_hdr)
-        self.data_tbl.setEditTriggers(Qtw.QAbstractItemView.NoEditTriggers)
-        self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
-        self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            # Set table
+            self.col_hdr = ["ID Mesa", "Nº Clientes", "Total"]
+            self.data_tbl = Qtw.QTableWidget(0, len(self.col_hdr))
+            self.data_tbl.verticalHeader().setVisible(False)
+            self.data_tbl.setHorizontalHeaderLabels(self.col_hdr)
+            self.data_tbl.setEditTriggers(Qtw.QAbstractItemView.NoEditTriggers)
+            self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
 
-        # Set btns
-        self.btn_lyt = Qtw.QHBoxLayout()
-        self.add_table_btn = Qtw.QPushButton("Agregar")
-        self.add_table_btn.clicked.connect(self.add_row)
-        self.edit_table_btn = Qtw.QPushButton("Administar")
-        self.edit_table_btn.clicked.connect(self.edit_clients)
-        self.delete_table_btn = Qtw.QPushButton("Eliminar")
-        self.delete_table_btn.clicked.connect(self.full_delete)
-        self.btn_lyt.addWidget(self.add_table_btn)
-        self.btn_lyt.addWidget(self.edit_table_btn)
-        self.btn_lyt.addWidget(self.delete_table_btn)
+            # Set btns
+            self.btn_lyt = Qtw.QHBoxLayout()
+            self.add_table_btn = Qtw.QPushButton("Agregar")
+            self.add_table_btn.clicked.connect(self.add_row)
+            self.edit_table_btn = Qtw.QPushButton("Administar")
+            self.edit_table_btn.clicked.connect(self.edit_clients)
+            self.delete_table_btn = Qtw.QPushButton("Eliminar")
+            self.delete_table_btn.clicked.connect(self.full_delete)
+            self.btn_lyt.addWidget(self.add_table_btn)
+            self.btn_lyt.addWidget(self.edit_table_btn)
+            self.btn_lyt.addWidget(self.delete_table_btn)
 
-        self.main_lyt.addWidget(self.data_tbl)
-        self.main_lyt.addLayout(self.btn_lyt)
-        self.setLayout(self.main_lyt)
-        self.show()
+            self.main_lyt.addWidget(self.data_tbl)
+            self.main_lyt.addLayout(self.btn_lyt)
+            self.setLayout(self.main_lyt)
+        except Exception as e:
+            print(f"Error: {e} 1")
 
     def get_table(self):
         try:

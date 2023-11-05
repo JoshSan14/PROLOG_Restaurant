@@ -4,53 +4,53 @@ import PyQt5.QtGui as Qtg
 from PyQt5.QtCore import Qt as Qt
 import db_conn as dbc
 from utils import Utils as Utl
-from factory_ingredient import GarrisonFactory as Gaf
-from ingredient import Garrison as Ga
+from factory_ingredient import ProteinFactory as Prf
+from ingredient import Protein as Pr
 from gui_crud_ingredient import IngredientCRUD
 
 
-class GarrisonCRUD(IngredientCRUD):
+class ProteinCRUD(IngredientCRUD):
     def __init__(self, db_conn):
-        super().__init__(db_conn, garrison)
+        super().__init__(db_conn, Pr())
 
-        self.garrison = Ga()
+        self.protein = Pr()
 
         # Add a title
-        self.setWindowTitle("Guarniciones")
+        self.setWindowTitle("Proteína")
 
         # Set layout
         self.main_lyt = Qtw.QVBoxLayout()
 
-        # Category
-        self.cat_lyt = Qtw.QVBoxLayout()
-        self.cat_lbl = Qtw.QLabel("Categoría")
-        self.cat_lyt.addWidget(self.cat_lbl)
-        self.cat_lbl.setAlignment(Qt.AlignCenter)
-        self.cat_cbox = Qtw.QComboBox()
-        self.cat_cbox.addItems(self.garrison.cat_opts)
-        self.cat_lyt.addWidget(self.cat_cbox)
+        # Origin
+        self.ori_lyt = Qtw.QVBoxLayout()
+        self.ori_lbl = Qtw.QLabel("Origen")
+        self.ori_lyt.addWidget(self.ori_lbl)
+        self.ori_lbl.setAlignment(Qt.AlignCenter)
+        self.ori_cbox = Qtw.QComboBox()
+        self.ori_cbox.addItems(self.protein.ori_opts)
+        self.ori_lyt.addWidget(self.ori_cbox)
 
-        # Size
-        self.size_lyt = Qtw.QVBoxLayout()
-        self.size_lbl = Qtw.QLabel("Tamaño")
-        self.size_lyt.addWidget(self.size_lbl)
-        self.size_lbl.setAlignment(Qt.AlignCenter)
-        self.size_cbox = Qtw.QComboBox()
-        self.size_cbox.addItems(self.garrison.size_opts)
-        self.size_lyt.addWidget(self.size_cbox)
+        # Temp
+        self.tex_lyt = Qtw.QVBoxLayout()
+        self.tex_lbl = Qtw.QLabel("Textura")
+        self.tex_lyt.addWidget(self.tex_lbl)
+        self.tex_lbl.setAlignment(Qt.AlignCenter)
+        self.tex_cbox = Qtw.QComboBox()
+        self.tex_cbox.addItems(self.protein.tex_opts)
+        self.tex_lyt.addWidget(self.tex_cbox)
 
-        # Cooking Method
+        # Base
         self.cook_met_lyt = Qtw.QVBoxLayout()
         self.cook_met_lbl = Qtw.QLabel("Método de Cocción")
         self.cook_met_lyt.addWidget(self.cook_met_lbl)
         self.cook_met_lbl.setAlignment(Qt.AlignCenter)
         self.cook_met_cbox = Qtw.QComboBox()
-        self.cook_met_cbox.addItems(self.garrison.cook_met_opts)
+        self.cook_met_cbox.addItems(self.protein.cook_met_opts)
         self.cook_met_lyt.addWidget(self.cook_met_cbox)
 
         # Data Table
-        self.data_tbl = Qtw.QTableWidget(0, len(self.garrison.col_hdr))
-        self.data_tbl.setHorizontalHeaderLabels(self.garrison.col_hdr)
+        self.data_tbl = Qtw.QTableWidget(0, len(self.protein.col_hdr))
+        self.data_tbl.setHorizontalHeaderLabels(self.protein.col_hdr)
         self.data_tbl.verticalHeader().setVisible(False)
         self.data_tbl.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         self.data_tbl.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
@@ -63,8 +63,8 @@ class GarrisonCRUD(IngredientCRUD):
 
         self.line2_lyt = Qtw.QHBoxLayout()
         self.line2_lyt.addLayout(self.fla_lyt)
-        self.line2_lyt.addLayout(self.cat_lyt)
-        self.line2_lyt.addLayout(self.size_lyt)
+        self.line2_lyt.addLayout(self.ori_lyt)
+        self.line2_lyt.addLayout(self.tex_lyt)
         self.line2_lyt.addLayout(self.cook_met_lyt)
 
         self.line3_lyt = Qtw.QHBoxLayout()
@@ -81,8 +81,6 @@ class GarrisonCRUD(IngredientCRUD):
 
         self.load_recs()
 
-        self.show()
-
     def locate_rec(self, record):
         try:
             self.name_tbox.setText(record[1])
@@ -91,8 +89,8 @@ class GarrisonCRUD(IngredientCRUD):
             Utl.set_checkbox_state(self.lu_chbox, record[4])
             Utl.set_checkbox_state(self.di_chbox, record[5])
             Utl.set_combobox_value(self.fla_cbox, record[6])
-            Utl.set_combobox_value(self.cat_cbox, record[7])
-            Utl.set_combobox_value(self.size_cbox, record[8])
+            Utl.set_combobox_value(self.ori_cbox, record[7])
+            Utl.set_combobox_value(self.tex_cbox, record[8])
             Utl.set_combobox_value(self.cook_met_cbox, record[9])
             self.cal_tbox.setText(str(record[10]))
             self.pri_tbox.setText(str(record[11]))
@@ -101,28 +99,28 @@ class GarrisonCRUD(IngredientCRUD):
 
     def upload_object(self):
         try:
-            record = Utl.get_single_record(self.db_conn, self.garrison.table_name, self.data_tbl, self.garrison.col_ord)
-            self.garrison = Gaf.create_ingredient(id_ingredient=record[0], name=record[1], cals=record[10],
-                                                  diet_nat=record[2],flavor=record[6], price=record[11],
-                                                  breakfast=record[3], lunch=record[4],  dinner=record[5],
-                                                  category=record[7], size=record[8], cook_met=record[9])
+            record = Utl.get_single_record(self.db_conn, self.protein.table_name, self.data_tbl, self.protein.col_ord)
+            self.protein = Prf.create_ingredient(id_ingredient=record[0], name=record[1], cals=record[10],
+                                                 diet_nat=record[2], flavor=record[6], price=record[11],
+                                                 breakfast=record[3], lunch=record[4], dinner=record[5],
+                                                 origin=record[7], texture=record[8], cook_met=record[9])
             self.locate_rec(record)
         except Exception as e:
             print(f"Error in input: {e}")
 
     def download_object(self):
         try:
-            self.garrison.name = self.name_tbox.text().capitalize()
-            self.garrison.cals = float(self.cal_tbox.text())
-            self.garrison.diet_nat = self.diet_nat_cbox.currentText()
-            self.garrison.flavor = self.fla_cbox.currentText()
-            self.garrison.price = float(self.pri_tbox.text())
-            self.garrison.breakfast = Utl.word_to_boolean(str(self.br_chbox.isChecked()))
-            self.garrison.lunch = Utl.word_to_boolean(str(self.lu_chbox.isChecked()))
-            self.garrison.dinner = Utl.word_to_boolean(str(self.di_chbox.isChecked()))
-            self.garrison.category = self.cat_cbox.currentText()
-            self.garrison.temperature = self.size_cbox.currentText()
-            self.garrison.base = self.cook_met_cbox.currentText()
+            self.protein.name = self.name_tbox.text().capitalize()
+            self.protein.cals = float(self.cal_tbox.text())
+            self.protein.diet_nat = self.diet_nat_cbox.currentText()
+            self.protein.flavor = self.fla_cbox.currentText()
+            self.protein.price = float(self.pri_tbox.text())
+            self.protein.breakfast = Utl.word_to_boolean(str(self.br_chbox.isChecked()))
+            self.protein.lunch = Utl.word_to_boolean(str(self.lu_chbox.isChecked()))
+            self.protein.dinner = Utl.word_to_boolean(str(self.di_chbox.isChecked()))
+            self.protein.origin = self.ori_cbox.currentText()
+            self.protein.texture = self.tex_cbox.currentText()
+            self.protein.cook_met = self.cook_met_cbox.currentText()
         except Exception as e:
             print(f"Error in input: {e}")
 
@@ -133,41 +131,41 @@ class GarrisonCRUD(IngredientCRUD):
 
         self.diet_nat_cbox.setCurrentIndex(0)
         self.fla_cbox.setCurrentIndex(0)
-        self.cat_cbox.setCurrentIndex(0)
-        self.size_cbox.setCurrentIndex(0)
+        self.ori_cbox.setCurrentIndex(0)
+        self.tex_cbox.setCurrentIndex(0)
         self.cook_met_cbox.setCurrentIndex(0)
 
         self.br_chbox.setChecked(False)
         self.lu_chbox.setChecked(False)
         self.di_chbox.setChecked(False)
 
-        self.garrison = Ga()
+        self.protein = Pr()
 
     def insert_rec(self):
         try:
             self.download_object()
-            Utl.insert_values(self.db_conn, self.garrison.table_name, self.garrison.to_dict())
+            Utl.insert_values(self.db_conn, self.protein.table_name, self.protein.to_dict())
             self.load_recs()
             self.clean_inputs()
         except Exception as e:
             print(f"Error inserting record: {e}")
 
     def load_recs(self):
-        Utl.load_values(self.db_conn, self.garrison.table_name, self.garrison.col_ord, self.data_tbl)
+        Utl.load_values(self.db_conn, self.protein.table_name, self.protein.col_ord, self.data_tbl)
 
     def update_rec(self):
         try:
-            if self.garrison.id_object > 0:
+            if self.protein.id_object > 0:
                 self.download_object()
-                Utl.update_values(self.db_conn, self.garrison.table_name, self.garrison.id_column,
-                                  self.garrison.id_object, self.garrison.to_dict())
+                Utl.update_values(self.db_conn, self.protein.table_name, self.protein.id_column,
+                                  self.protein.id_object, self.protein.to_dict())
                 self.load_recs()
         except Exception as e:
             print(f"Error in update: {e}")
 
     def delete_rec(self):
         try:
-            Utl.delete_values(self.db_conn, self.garrison.table_name, self.data_tbl)
+            Utl.delete_values(self.db_conn, self.protein.table_name, self.data_tbl)
             self.load_recs()
         except Exception as e:
             print(f"Error deleting record: {e}")
@@ -176,8 +174,8 @@ class GarrisonCRUD(IngredientCRUD):
 if __name__ == "__main__":
     db = dbc.DBConn("restaurante", "postgres", "1234", "localhost", "5432")
     app = Qtw.QApplication(sys.argv)
-    garrison = Ga()
-    mw = GarrisonCRUD(db)
+    protein = Pr()
+    mw = ProteinCRUD(db)
 
     # Run the application
     sys.exit(app.exec_())
